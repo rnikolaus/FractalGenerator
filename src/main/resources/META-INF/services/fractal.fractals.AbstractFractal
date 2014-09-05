@@ -1,0 +1,12 @@
+fractal.fractals.Xpow3minusOne
+fractal.fractals.Xpow4plusXpow3minusOne
+fractal.fractals.Xpow8plus15Xpow4minus16
+fractal.fractals.Zpow3minus2zplus2
+fractal.fractals.Zpow6plusZpow3minus1
+fractal.fractals.Mandelbrot
+fractal.fractals.JuliaSet
+fractal.fractals.Collatz
+fractal.fractals.BurningShip
+fractal.fractals.SinX
+fractal.fractals.SinXminusOne
+fractal.fractals.CoshXminusOne
