@@ -25,6 +25,7 @@ public class ResultIterator implements Iterable<WorkBean> {
         }
     }
 
+    @Override
     public Iterator<WorkBean> iterator() {
         return result.iterator();
     }

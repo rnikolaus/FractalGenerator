@@ -1,7 +1,6 @@
 package fractal.util;
 
 import fractal.fractals.AbstractFractal;
-import java.util.Iterator;
 import java.util.concurrent.LinkedBlockingQueue;
 
 /**
@@ -62,6 +61,7 @@ public class ResultProducer extends Thread implements Iterable<FractalCalculator
         }
     }
 
+    @Override
     public FractalCalculatorCallableIterator iterator() {
         return iterator;
 
