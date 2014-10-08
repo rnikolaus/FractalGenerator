@@ -59,6 +59,7 @@ public class WorkBean {
         fractalResult= fractalDimensionsBean.getAbstractFractal().calculate(getComplex());
     }
     public FractalResult getFractalResult(){
+        if (fractalResult==null)calculate();
         return fractalResult;
     }
     

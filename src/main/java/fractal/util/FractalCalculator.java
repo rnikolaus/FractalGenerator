@@ -70,12 +70,15 @@ public class FractalCalculator implements Iterable<ResultIterator> {
         exs = Executors.newFixedThreadPool(threadpoolSize);
     }
 
+    @Override
     public Iterator<ResultIterator> iterator() {
         return new Iterator<ResultIterator>() {
+            @Override
             public boolean hasNext() {
                 return !result.isEmpty();
             }
             
+            @Override
             public ResultIterator next() {
                 
                     try {
