@@ -1,7 +1,6 @@
 
 package fractal.util;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -26,9 +25,8 @@ public class ResultIterator implements Iterable<WorkBean> {
         }
     }
 
-    public ResultIterator(WorkBean... calculatedValues) {
-        result = new ArrayList<>();
-        Collections.addAll(result, calculatedValues);
+    public ResultIterator(WorkBean calculatedValues) {
+        result =Collections.singletonList(calculatedValues);
     }
     
 
