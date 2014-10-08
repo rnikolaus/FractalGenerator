@@ -11,10 +11,8 @@ import fractal.util.FractalCalculator;
 import fractal.util.FractalCalculatorStreams;
 import fractal.util.FractalColor;
 import fractal.util.FractalColorSet;
-import fractal.util.FractalResult;
 import fractal.util.ResultIterator;
 import fractal.util.WorkBean;
-import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
@@ -191,6 +189,7 @@ public class FractalPanel extends javax.swing.JPanel {
     }
     public void setUseLambda(boolean useLambda){
         this.useLambda=useLambda;
+        setFractalCalculator();
     }
     public boolean getUseLambda(){
         return useLambda;
