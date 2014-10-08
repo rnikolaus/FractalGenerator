@@ -25,6 +25,11 @@ public class ResultIterator implements Iterable<WorkBean> {
         }
     }
 
+    public ResultIterator(WorkBean calculatedValues) {
+        result =Collections.singletonList(calculatedValues);
+    }
+    
+
     @Override
     public Iterator<WorkBean> iterator() {
         return result.iterator();

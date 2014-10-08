@@ -21,6 +21,7 @@ public class FractalCalculatorCallable implements Callable<ResultIterator> {
         this.valuesToCalculate = valuesToCalculate;
     }
 
+    @Override
     public ResultIterator call() throws Exception {
         return new ResultIterator(valuesToCalculate);
     }

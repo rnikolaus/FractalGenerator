@@ -4,7 +4,6 @@ package fractal.util;
 import fractal.fractals.AbstractFractal;
 import java.util.Collections;
 import java.util.Iterator;
-import java.util.Observable;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutionException;
@@ -18,12 +17,12 @@ import java.util.logging.Logger;
  *
  * @author rapnik
  */
-public class FractalCalculator implements Iterable<ResultIterator> {
+public class FractalCalculator extends AbstractFractalCalculator {
     final AbstractFractal fractalStrategy;
     private ExecutorService exs;
     private final int threadpoolSize;
     final int workChunkSize;
-    private final Queue<Future<ResultIterator>> result = new ConcurrentLinkedQueue<Future<ResultIterator>>();
+    private final Queue<Future<ResultIterator>> result = new ConcurrentLinkedQueue<>();
 
     /**
      *
@@ -46,6 +45,7 @@ public class FractalCalculator implements Iterable<ResultIterator> {
      * @param sizeX
      * @param sizeY
      */
+    @Override
     public synchronized void createFract(double factor, double offsetX, double offsetY, int sizeX, int sizeY) {      
         stop();
         ResultProducer workCache = new ResultProducer(workChunkSize, 
@@ -56,9 +56,11 @@ public class FractalCalculator implements Iterable<ResultIterator> {
 
     private void calculate(ResultProducer workCache) {
         exs.submit(workCache);
+        
         for (FractalCalculatorCallable c : workCache) {
             result.add(exs.submit(c));
         }
+        
     }
 
     /**
@@ -93,6 +95,7 @@ public class FractalCalculator implements Iterable<ResultIterator> {
                 }
             
 
+            @Override
             public void remove() {
                 throw new UnsupportedOperationException("Not supported"); 
             }

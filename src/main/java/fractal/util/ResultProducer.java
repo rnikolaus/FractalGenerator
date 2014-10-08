@@ -2,6 +2,7 @@ package fractal.util;
 
 import fractal.fractals.AbstractFractal;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.stream.Stream;
 
 /**
  *
@@ -59,6 +60,10 @@ public class ResultProducer extends Thread implements Iterable<FractalCalculator
                 add(x, y);
             }
         }
+    }
+    
+    public Stream<WorkBean> getStream(){
+        return workList.stream().parallel();
     }
 
     @Override

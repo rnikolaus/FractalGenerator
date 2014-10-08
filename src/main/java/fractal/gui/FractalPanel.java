@@ -5,8 +5,10 @@
 package fractal.gui;
 
 import fractal.fractals.AbstractFractal;
+import fractal.util.AbstractFractalCalculator;
 import fractal.util.DimXY;
 import fractal.util.FractalCalculator;
+import fractal.util.FractalCalculatorStreams;
 import fractal.util.FractalColor;
 import fractal.util.FractalColorSet;
 import fractal.util.FractalResult;
@@ -32,14 +34,16 @@ import javax.swing.Timer;
 public class FractalPanel extends javax.swing.JPanel {
 
     transient private BufferedImage img = new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB);
-    private transient FractalCalculator fractalCalculator;
+    private transient AbstractFractalCalculator fractalCalculator;
     Raster blank = img.getData();
+    boolean useLambda;
 
     double fact, offsetX, offsetY;
 //    ExecutorService exs = Executors.newFixedThreadPool(1);
     final private FractalColorSet fractalColorSet = new FractalColorSet();
     Thread drawThread;
     Timer timer = new Timer(50, new ActionListener() {
+        @Override
         public void actionPerformed(ActionEvent e) {
             resizedAction();
         }
@@ -119,7 +123,12 @@ public class FractalPanel extends javax.swing.JPanel {
         if (abstractFractal == null) {
             return;
         }
-        FractalCalculator fc = new FractalCalculator(abstractFractal, threadPoolSize, workChunkSize);
+        AbstractFractalCalculator fc=null;
+        if (useLambda){
+           fc = new FractalCalculatorStreams(abstractFractal);
+        }else{
+           fc = new FractalCalculator(abstractFractal, threadPoolSize, workChunkSize);
+        }
         setFractalCalculator(fc);
     }
 
@@ -172,13 +181,19 @@ public class FractalPanel extends javax.swing.JPanel {
      *
      * @param fractalCalculator
      */
-    public synchronized void setFractalCalculator(FractalCalculator fractalCalculator) {
+    public synchronized void setFractalCalculator(AbstractFractalCalculator fractalCalculator) {
         if (this.fractalCalculator != null) {
             this.fractalCalculator.stop();
         }
         this.fractalCalculator = fractalCalculator;
         resetOffset();
         resized();
+    }
+    public void setUseLambda(boolean useLambda){
+        this.useLambda=useLambda;
+    }
+    public boolean getUseLambda(){
+        return useLambda;
     }
 
     /**
