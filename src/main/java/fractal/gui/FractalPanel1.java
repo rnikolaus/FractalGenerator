@@ -5,14 +5,10 @@
 package fractal.gui;
 
 import fractal.fractals.AbstractFractal;
-import fractal.util.AbstractFractalCalculator;
-import fractal.util.DimXY;
-import fractal.util.FractalCalculator;
-import fractal.util.FractalCalculatorStreams;
 import fractal.util.FractalColor;
 import fractal.util.FractalColorSet;
-import fractal.util.ResultIterator;
-import fractal.util.WorkBean;
+import fractal.util.FractalDimensionsBean;
+import fractal.util.TestFractalCalculator;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
@@ -20,37 +16,37 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.awt.image.Raster;
-import java.util.Iterator;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.Timer;
 
 /**
  *
  * @author rapnik
  */
-public class FractalPanel extends javax.swing.JPanel {
+public class FractalPanel1 extends javax.swing.JPanel {
 
     transient private BufferedImage img = new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB);
-    private transient AbstractFractalCalculator fractalCalculator;
+    private transient TestFractalCalculator fractalCalculator;
     Raster blank = img.getData();
     boolean useLambda;
 
     double fact, offsetX, offsetY;
 //    ExecutorService exs = Executors.newFixedThreadPool(1);
     final private FractalColorSet fractalColorSet = new FractalColorSet();
-    Thread drawThread;
-    Timer timer = new Timer(50, new ActionListener() {
+
+    Timer resizedTimer = new Timer(50, new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
             resizedAction();
         }
     });
+    Timer refreshTimer = new Timer(100, new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            repaint();
+        }
+    });
 
     private void resizedAction() {
-        if (this.fractalCalculator != null) {
-            this.fractalCalculator.stop();
-        }
 
         int sizeX = getWidth();
         int sizeY = getHeight();
@@ -59,25 +55,27 @@ public class FractalPanel extends javax.swing.JPanel {
         createFract();
     }
     private boolean running;
-    private int workChunkSize = 1;
+
     private int threadPoolSize = 1;
     private AbstractFractal abstractFractal;
 
     /**
      * Creates new form FractalPanel
      */
-    public FractalPanel() {
+    public FractalPanel1() {
         initComponents();
-        timer.setRepeats(false);
+        resizedTimer.setRepeats(false);
+        refreshTimer.setRepeats(true);
+        refreshTimer.start();
         resetOffset();
-        setFractalCalculator();
         fractalColorSet.addFractalColor(new FractalColor(10, 0, 0));
         fractalColorSet.addFractalColor(new FractalColor(0, 10, 0));
         fractalColorSet.addFractalColor(new FractalColor(0, 0, 10));
         fractalColorSet.addFractalColor(new FractalColor(10, 10, 0));
         fractalColorSet.addFractalColor(new FractalColor(10, 0, 10));
         fractalColorSet.addFractalColor(new FractalColor(0, 10, 10));
-        
+        createFract();
+
     }
 
     public boolean getRunning() {
@@ -87,21 +85,19 @@ public class FractalPanel extends javax.swing.JPanel {
     private void setRunning(boolean running) {
         boolean old = this.running;
         this.running = running;
+        
+//        if (running&&!refreshTimer.isRunning()) {
+//            refreshTimer.start();
+//        } else {
+//            refreshTimer.stop();
+//        }
+//        repaint();
         firePropertyChange("running", old, running);
-    }
-
-    public void setWorkChunkSize(int workChunkSize) {
-        this.workChunkSize = workChunkSize;
-        setFractalCalculator();
-    }
-
-    public int getWorkChunkSize() {
-        return workChunkSize;
     }
 
     public void setThreadPoolSize(int threadPoolSize) {
         this.threadPoolSize = threadPoolSize;
-        setFractalCalculator();
+        createFract();
     }
 
     public int getThreadPoolSize() {
@@ -114,20 +110,7 @@ public class FractalPanel extends javax.swing.JPanel {
 
     public void setAbstractFractal(AbstractFractal abstractFractal) {
         this.abstractFractal = abstractFractal;
-        setFractalCalculator();
-    }
-
-    private void setFractalCalculator() {
-        if (abstractFractal == null) {
-            return;
-        }
-        AbstractFractalCalculator fc=null;
-        if (useLambda){
-           fc = new FractalCalculatorStreams(abstractFractal);
-        }else{
-           fc = new FractalCalculator(abstractFractal, threadPoolSize, workChunkSize);
-        }
-        setFractalCalculator(fc);
+        createFract();
     }
 
     private void resetOffset() {
@@ -154,93 +137,62 @@ public class FractalPanel extends javax.swing.JPanel {
     }
 
     private synchronized void createFract() {
-        if (fractalCalculator == null) {
-            return;
-        }
-
-        int sizeX = this.getWidth();
-        int sizeY = this.getHeight();
-        if (drawThread != null) {
-            drawThread.interrupt();
-            try {
-                drawThread.join();
-            } catch (InterruptedException ex) {
-                Logger.getLogger(FractalPanel.class.getName()).log(Level.INFO, null, ex);
-            }
-        }
-
-        setRunning(true);
-        fractalCalculator.createFract(fact, offsetX, offsetY, sizeX, sizeY);
-        draw();
-    }
-
-    /**
-     * Set a new FractalCalculator
-     *
-     * @param fractalCalculator
-     */
-    public synchronized void setFractalCalculator(AbstractFractalCalculator fractalCalculator) {
         if (this.fractalCalculator != null) {
             this.fractalCalculator.stop();
         }
-        this.fractalCalculator = fractalCalculator;
-        resetOffset();
-        resized();
+        img.setData(blank);
+        int sizeX = this.getWidth();
+        int sizeY = this.getHeight();
+
+        setRunning(true);
+        FractalDimensionsBean frb = new FractalDimensionsBean(sizeX, sizeY, fact, offsetX, offsetY, abstractFractal);
+
+        final TestFractalCalculator fractalCalculatorLocal = new TestFractalCalculator(frb, img.getRaster(), fractalColorSet);
+        fractalCalculator = fractalCalculatorLocal;
+
+        Runnable calculation;
+        if (useLambda) {
+            calculation = new Runnable() {
+
+                @Override
+                public void run() {
+                    fractalCalculatorLocal.calculate();
+                    setRunning(false);
+                }
+
+            };
+        } else {
+            calculation = new Runnable() {
+
+                @Override
+                public void run() {
+                    fractalCalculatorLocal.calculate(getThreadPoolSize());
+                    setRunning(false);
+                }
+
+            };
+
+        }
+        Thread t = new Thread(calculation);
+        t.start();
+
     }
-    public void setUseLambda(boolean useLambda){
-        this.useLambda=useLambda;
-        setFractalCalculator();
+
+    public void setUseLambda(boolean useLambda) {
+        this.useLambda = useLambda;
+        createFract();
     }
-    public boolean getUseLambda(){
+
+    public boolean getUseLambda() {
         return useLambda;
     }
 
-    /**
-     * Start the drawing process
-     *
-     */
-    private synchronized void draw() {
-
-        img.setData(blank);
-        final Iterator<ResultIterator> it = fractalCalculator.iterator();
-        drawThread = new Thread() {
-
-            @Override
-            public void run() {
-                long last = System.currentTimeMillis();
-                while (!interrupted() && it.hasNext()) {
-                    ResultIterator list = it.next();
-                    for (WorkBean rb : list) {
-                        if (interrupted()) {
-                            break;
-                        }
-                        DimXY d = rb.getDimXY();
-                        img.setRGB(d.getX(), d.getY(), fractalColorSet.getColor(rb.getFractalResult()).getRGB());
-//                        img.setRGB(d.getX(), d.getY(), getRgb(rb.getFractalResult()));
-                    }
-                    long now = System.currentTimeMillis();
-                    if (now - last > 100) {
-                        repaint();
-                        last = now;
-                    }
-                }
-                repaint();
-                setRunning(false);
-            }
-
-        };
-
-        drawThread.setPriority(Thread.MIN_PRIORITY);
-        drawThread.start();
-
-    }
-    
     private synchronized void resized() {
 
-        if (timer.isRunning()) {
-            timer.restart();
+        if (resizedTimer.isRunning()) {
+            resizedTimer.restart();
         } else {
-            timer.start();
+            resizedTimer.start();
         }
     }
 

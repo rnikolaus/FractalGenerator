@@ -24,37 +24,28 @@
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="0" attributes="0">
-              <EmptySpace min="-2" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" attributes="0">
-                      <Component id="fractalPanel1" max="32767" attributes="0"/>
-                      <EmptySpace min="-2" pref="8" max="-2" attributes="0"/>
-                  </Group>
-                  <Group type="102" attributes="0">
+                  <Group type="102" alignment="0" attributes="0">
                       <Group type="103" groupAlignment="0" attributes="0">
+                          <Component id="fractalPanel11" max="32767" attributes="0"/>
                           <Group type="102" attributes="0">
-                              <Component id="abstractFractalComboBox1" min="-2" pref="125" max="-2" attributes="0"/>
-                              <EmptySpace pref="49" max="32767" attributes="0"/>
-                              <Component id="jCheckBox1" min="-2" max="-2" attributes="0"/>
-                          </Group>
-                          <Component id="progressBar1" alignment="0" min="-2" max="-2" attributes="0"/>
-                      </Group>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="1" max="-2" attributes="0">
-                          <Group type="102" alignment="1" attributes="0">
-                              <Component id="jTextField2" max="32767" attributes="0"/>
+                              <Component id="progressBar1" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace pref="93" max="32767" attributes="0"/>
+                              <Component id="jTextField2" min="-2" pref="37" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="jSlider2" min="-2" max="-2" attributes="0"/>
                           </Group>
-                          <Group type="102" alignment="1" attributes="0">
-                              <Component id="jTextField1" min="-2" pref="37" max="-2" attributes="0"/>
-                              <EmptySpace max="-2" attributes="0"/>
-                              <Component id="jSlider1" min="-2" max="-2" attributes="0"/>
-                          </Group>
                       </Group>
+                      <EmptySpace max="-2" attributes="0"/>
+                  </Group>
+                  <Group type="102" alignment="0" attributes="0">
+                      <Component id="abstractFractalComboBox1" min="-2" pref="125" max="-2" attributes="0"/>
+                      <EmptySpace max="32767" attributes="0"/>
+                      <Component id="jCheckBox1" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="33" max="-2" attributes="0"/>
                   </Group>
               </Group>
-              <EmptySpace min="-2" max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -62,13 +53,9 @@
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="0" attributes="0">
-                  <Component id="jSlider1" alignment="0" min="-2" max="-2" attributes="0"/>
-                  <Group type="103" alignment="0" groupAlignment="3" attributes="0">
-                      <Component id="jTextField1" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="abstractFractalComboBox1" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="jCheckBox1" alignment="3" min="-2" max="-2" attributes="0"/>
-                  </Group>
+              <Group type="103" groupAlignment="3" attributes="0">
+                  <Component id="abstractFractalComboBox1" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="jCheckBox1" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
@@ -76,26 +63,14 @@
                   <Component id="jTextField2" min="-2" max="-2" attributes="0"/>
                   <Component id="progressBar1" alignment="0" min="-2" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
-              <Component id="fractalPanel1" max="32767" attributes="0"/>
+              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+              <Component id="fractalPanel11" max="32767" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
   </Layout>
   <SubComponents>
-    <Component class="javax.swing.JSlider" name="jSlider1">
-      <Properties>
-        <Property name="maximum" type="int" value="999"/>
-        <Property name="minimum" type="int" value="1"/>
-        <Property name="toolTipText" type="java.lang.String" value="Work chunk size, the number of pixels per workpackage"/>
-      </Properties>
-      <BindingProperties>
-        <BindingProperty name="value" source="fractalPanel1" sourcePath="${workChunkSize}" target="jSlider1" targetPath="value" updateStrategy="0" immediately="false">
-          <BindingParameter name="IGNORE_ADJUSTING" value="N"/>
-        </BindingProperty>
-      </BindingProperties>
-    </Component>
     <Component class="javax.swing.JSlider" name="jSlider2">
       <Properties>
         <Property name="maximum" type="int" value="20"/>
@@ -103,19 +78,8 @@
         <Property name="toolTipText" type="java.lang.String" value="Thread pool size, the number of concurrent threads"/>
       </Properties>
       <BindingProperties>
-        <BindingProperty name="value" source="fractalPanel1" sourcePath="${threadPoolSize}" target="jSlider2" targetPath="value" updateStrategy="0" immediately="false">
+        <BindingProperty name="value" source="fractalPanel11" sourcePath="${threadPoolSize}" target="jSlider2" targetPath="value" updateStrategy="0" immediately="false">
           <BindingParameter name="IGNORE_ADJUSTING" value="N"/>
-        </BindingProperty>
-      </BindingProperties>
-    </Component>
-    <Component class="javax.swing.JTextField" name="jTextField1">
-      <Properties>
-        <Property name="editable" type="boolean" value="false"/>
-        <Property name="horizontalAlignment" type="int" value="11"/>
-      </Properties>
-      <BindingProperties>
-        <BindingProperty name="text" source="jSlider1" sourcePath="${value}" target="jTextField1" targetPath="text" updateStrategy="0" immediately="false">
-          <BindingParameter name="javax.swing.binding.ParameterKeys.TEXT_CHANGE_STRATEGY" value="javax.swing.binding.TextChangeStrategy.ON_TYPE"/>
         </BindingProperty>
       </BindingProperties>
     </Component>
@@ -132,10 +96,26 @@
     </Component>
     <Component class="fractal.gui.AbstractFractalComboBox" name="abstractFractalComboBox1">
       <BindingProperties>
-        <BindingProperty name="selectedItem" source="fractalPanel1" sourcePath="${abstractFractal}" target="abstractFractalComboBox1" targetPath="selectedItem" updateStrategy="0" immediately="false"/>
+        <BindingProperty name="selectedItem" source="fractalPanel11" sourcePath="${abstractFractal}" target="abstractFractalComboBox1" targetPath="selectedItem" updateStrategy="0" immediately="false"/>
       </BindingProperties>
     </Component>
-    <Container class="fractal.gui.FractalPanel" name="fractalPanel1">
+    <Component class="fractal.gui.ProgressBar" name="progressBar1">
+      <BindingProperties>
+        <BindingProperty name="active" source="fractalPanel11" sourcePath="${running}" target="progressBar1" targetPath="active" updateStrategy="0" immediately="false"/>
+      </BindingProperties>
+    </Component>
+    <Component class="javax.swing.JCheckBox" name="jCheckBox1">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Lambda"/>
+      </Properties>
+      <BindingProperties>
+        <BindingProperty name="selected" source="fractalPanel11" sourcePath="${useLambda}" target="jCheckBox1" targetPath="selected" updateStrategy="0" immediately="false"/>
+      </BindingProperties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jCheckBox1ActionPerformed"/>
+      </Events>
+    </Component>
+    <Container class="fractal.gui.FractalPanel1" name="fractalPanel11">
 
       <Layout>
         <DimensionLayout dim="0">
@@ -145,26 +125,10 @@
         </DimensionLayout>
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
-              <EmptySpace min="0" pref="216" max="32767" attributes="0"/>
+              <EmptySpace min="0" pref="220" max="32767" attributes="0"/>
           </Group>
         </DimensionLayout>
       </Layout>
     </Container>
-    <Component class="fractal.gui.ProgressBar" name="progressBar1">
-      <BindingProperties>
-        <BindingProperty name="active" source="fractalPanel1" sourcePath="${running}" target="progressBar1" targetPath="active" updateStrategy="0" immediately="false"/>
-      </BindingProperties>
-    </Component>
-    <Component class="javax.swing.JCheckBox" name="jCheckBox1">
-      <Properties>
-        <Property name="text" type="java.lang.String" value="Lambda"/>
-      </Properties>
-      <BindingProperties>
-        <BindingProperty name="selected" source="fractalPanel1" sourcePath="${useLambda}" target="jCheckBox1" targetPath="selected" updateStrategy="0" immediately="false"/>
-      </BindingProperties>
-      <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jCheckBox1ActionPerformed"/>
-      </Events>
-    </Component>
   </SubComponents>
 </Form>
