@@ -12,6 +12,7 @@ import javax.swing.Timer;
  */
 public class ProgressBar extends JProgressBar{
     private final Timer progressBarTimer = new Timer(100, new ActionListener() {
+        @Override
         public void actionPerformed(ActionEvent e) {
             int value = getValue();
             if (value == 100) {

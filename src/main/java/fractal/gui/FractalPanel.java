@@ -66,7 +66,7 @@ public class FractalPanel extends javax.swing.JPanel {
         fractalColorSet.addFractalColor(new FractalColor(10, 10, 0));
         fractalColorSet.addFractalColor(new FractalColor(10, 0, 10));
         fractalColorSet.addFractalColor(new FractalColor(0, 10, 10));
-        createFract();
+      
 
     }
 
