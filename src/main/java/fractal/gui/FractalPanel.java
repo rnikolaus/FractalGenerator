@@ -66,7 +66,6 @@ public class FractalPanel extends javax.swing.JPanel {
         fractalColorSet.addFractalColor(new FractalColor(10, 10, 0));
         fractalColorSet.addFractalColor(new FractalColor(10, 0, 10));
         fractalColorSet.addFractalColor(new FractalColor(0, 10, 10));
-      
 
     }
 
@@ -77,14 +76,17 @@ public class FractalPanel extends javax.swing.JPanel {
     private void setRunning(boolean running) {
         boolean old = this.running;
         this.running = running;
-        
-        if (running&&!refreshTimer.isRunning()) {
-            refreshTimer.start();
+        if (running) {
+            if (!refreshTimer.isRunning()) {
+                refreshTimer.start();
+            }        
         } else {
-            refreshTimer.stop();
-            repaint();
+            if (refreshTimer.isRunning()) {
+                refreshTimer.stop();
+                repaint();
+            }         
         }
-        
+
         firePropertyChange("running", old, running);
     }
 
@@ -103,7 +105,8 @@ public class FractalPanel extends javax.swing.JPanel {
 
     public void setAbstractFractal(AbstractFractal abstractFractal) {
         this.abstractFractal = abstractFractal;
-        createFract();
+        resetOffset();
+        calculateFractalDeferred();
     }
 
     private void resetOffset() {
@@ -126,26 +129,25 @@ public class FractalPanel extends javax.swing.JPanel {
         } else {
             fact *= amount;
         }
-        createFract();
+        calculateFractalDeferred();
     }
 
     private synchronized void createFract() {
         if (this.fractalCalculator != null) {
             this.fractalCalculator.stop();
         }
-        deferredTimer.stop();
         img.setData(blank);
         int sizeX = this.getWidth();
         int sizeY = this.getHeight();
 
         setRunning(true);
-        
+
         FractalDimensionsBean frb = new FractalDimensionsBean(sizeX, sizeY, fact, offsetX, offsetY, abstractFractal);
 
-        final FractalCalculator fractalCalculatorLocal = 
-                new FractalCalculator(frb, img.getRaster(), fractalColorSet, () -> {
+        final FractalCalculator fractalCalculatorLocal
+                = new FractalCalculator(frb, img.getRaster(), fractalColorSet, () -> {
                     setRunning(false);
-        });
+                });
         fractalCalculator = fractalCalculatorLocal;
 
         Runnable calculationRunnable;
@@ -170,7 +172,7 @@ public class FractalPanel extends javax.swing.JPanel {
 
     public void setUseLambda(boolean useLambda) {
         this.useLambda = useLambda;
-        createFract();
+        calculateFractalDeferred();
     }
 
     public boolean getUseLambda() {
@@ -178,7 +180,7 @@ public class FractalPanel extends javax.swing.JPanel {
     }
 
     /**
-     * All values that are set manually (by resizing the panel, moving sliders, 
+     * All values that are set manually (by resizing the panel, moving sliders,
      * etc.) will wait for at least 50 ms to make the ui more responsive
      */
     private synchronized void calculateFractalDeferred() {
@@ -236,7 +238,7 @@ public class FractalPanel extends javax.swing.JPanel {
     private void formMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_formMouseClicked
         Point p = ((java.awt.event.MouseEvent) evt).getPoint();
         rescale(p, 10.0, (((java.awt.event.MouseEvent) evt).getButton() == MouseEvent.BUTTON1));
-        createFract();
+        calculateFractalDeferred();
     }//GEN-LAST:event_formMouseClicked
 
     private void formMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {//GEN-FIRST:event_formMouseWheelMoved
