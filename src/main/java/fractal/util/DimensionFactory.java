@@ -33,9 +33,9 @@ public class DimensionFactory {
     
     private void createDimensions() {
        
-        for (int x = 0; x < this.x; x ++) {
-            for (int y = 0; y < this.y; y ++) {
-                result.add(new DimXY(x, y));
+        for (int xLocal = 0; xLocal < this.x; xLocal ++) {
+            for (int yLocal = 0; yLocal < this.y; yLocal ++) {
+                result.add(new DimXY(xLocal, yLocal));
             }
         }
         

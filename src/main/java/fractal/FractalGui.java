@@ -38,7 +38,7 @@ public class FractalGui extends javax.swing.JFrame {
         abstractFractalComboBox1 = new fractal.gui.AbstractFractalComboBox();
         progressBar1 = new fractal.gui.ProgressBar();
         jCheckBox1 = new javax.swing.JCheckBox();
-        fractalPanel11 = new fractal.gui.FractalPanel1();
+        fractalPanel11 = new fractal.gui.FractalPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -175,7 +175,7 @@ public class FractalGui extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private fractal.gui.AbstractFractalComboBox abstractFractalComboBox1;
-    private fractal.gui.FractalPanel1 fractalPanel11;
+    private fractal.gui.FractalPanel fractalPanel11;
     private javax.swing.JCheckBox jCheckBox1;
     private javax.swing.JSlider jSlider2;
     private javax.swing.JTextField jTextField2;
