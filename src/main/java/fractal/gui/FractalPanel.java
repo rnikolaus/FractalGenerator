@@ -137,15 +137,13 @@ public class FractalPanel extends javax.swing.JPanel {
             this.fractalCalculator.stop();
         }
         img.setData(blank);
-        int sizeX = this.getWidth();
-        int sizeY = this.getHeight();
-
+       
         setRunning(true);
 
-        FractalDimensionsBean frb = new FractalDimensionsBean(sizeX, sizeY, fact, offsetX, offsetY, abstractFractal);
+        FractalDimensionsBean frb = new FractalDimensionsBean( fact, offsetX, offsetY, abstractFractal,img.getRaster());
 
         final FractalCalculator fractalCalculatorLocal
-                = new FractalCalculator(frb, img.getRaster(), fractalColorSet, () -> {
+                = new FractalCalculator(frb, fractalColorSet, () -> {
                     setRunning(false);
                 });
         fractalCalculator = fractalCalculatorLocal;

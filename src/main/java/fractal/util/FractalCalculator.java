@@ -27,15 +27,13 @@ public class FractalCalculator {
     }
 
     private final FractalDimensionsBean frb;
-    private final WritableRaster wr;
     private ExecutorService exs;
     private final FractalColorSet fcs;
     private boolean running = true;
     private final FinishCallback fhc;
 
-    public FractalCalculator(FractalDimensionsBean frb, WritableRaster wr, FractalColorSet fcs, FinishCallback fhc) {
+    public FractalCalculator(FractalDimensionsBean frb, FractalColorSet fcs, FinishCallback fhc) {
         this.frb = frb;
-        this.wr = wr;
         this.fcs = fcs;
         this.fhc = fhc;
     }
@@ -75,16 +73,15 @@ public class FractalCalculator {
         FractalResult fractalResult = frb.getAbstractFractal().calculate(getComplex(x, y));
         Color col = fcs.getColor(fractalResult);
         if (running) {
-            wr.setPixel(x, y, new int[]{col.getRed(), col.getGreen(), col.getBlue()});
+            frb.getImgData().setPixel(x, y, new int[]{col.getRed(), col.getGreen(), col.getBlue()});
         }
     }
 
     public void calculate() {
         DimensionFactory dimensionFactory = new DimensionFactory(frb.getSizeX(), frb.getSizeY());
-        dimensionFactory.getDimensions().stream().parallel().forEach((DimXY t) -> {
-            runFunction(t);
+        dimensionFactory.getDimensions().stream().parallel().forEach((DimXY dim) -> {
+            runFunction(dim);
         });
-
         if (running) {
             fhc.run();
         }
@@ -97,7 +94,12 @@ public class FractalCalculator {
                 * (y - frb.getSizeY() / 2.0) + frb.getOffsetY();
         return new Complex(real, imaginary);
     }
+    
 
+    /**
+     * This method stops the calculation,
+     * the FinishCallback won't run
+     */
     public void stop() {
         running = false;
     }
