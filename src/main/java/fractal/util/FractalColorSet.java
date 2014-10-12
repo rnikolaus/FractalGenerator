@@ -1,9 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package fractal.util;
 
 import java.awt.Color;
@@ -19,7 +13,13 @@ public class FractalColorSet {
     public void addFractalColor(FractalColor fractalColor){
         fractalColors.add(fractalColor);
     }
-    public synchronized Color getColor(FractalResult fractalResult){
+    /**
+     * This maps a FractalResult to a Color
+     * If the maximum iteration depth was exceeded, the color is white
+     * @param fractalResult
+     * @return a Color for a FractalResult
+     */
+    public Color getColor(FractalResult fractalResult){
         if (!fractalResult.isSolutionFound()){
             return Color.WHITE;
         }

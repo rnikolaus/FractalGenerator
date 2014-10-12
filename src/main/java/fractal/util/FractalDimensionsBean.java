@@ -1,9 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package fractal.util;
 
 import fractal.fractals.AbstractFractal;
@@ -16,6 +10,7 @@ import java.awt.image.WritableRaster;
         final private double offsetX;
         final private double offsetY;
         final private AbstractFractal abstractFractal;
+       
 
         public FractalDimensionsBean(double factor, double offsetX, double offsetY,AbstractFractal abstractFractal1,WritableRaster imgData) {
             this.factor = factor;

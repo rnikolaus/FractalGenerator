@@ -22,7 +22,7 @@ public class AbstractFractalComboBox extends JComboBox<AbstractFractal>{
     }
     
     private DefaultComboBoxModel<AbstractFractal> initComboBox(){
-        DefaultComboBoxModel<AbstractFractal> comboBoxModel = new DefaultComboBoxModel<AbstractFractal>();
+        DefaultComboBoxModel<AbstractFractal> comboBoxModel = new DefaultComboBoxModel<>();
         ServiceLoader<AbstractFractal> ls = ServiceLoader.load(AbstractFractal.class);
         for (AbstractFractal fs: ls){
             comboBoxModel.addElement(fs);

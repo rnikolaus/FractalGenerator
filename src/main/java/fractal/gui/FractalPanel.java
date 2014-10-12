@@ -79,12 +79,12 @@ public class FractalPanel extends javax.swing.JPanel {
         if (running) {
             if (!refreshTimer.isRunning()) {
                 refreshTimer.start();
-            }        
+            }
         } else {
             if (refreshTimer.isRunning()) {
                 refreshTimer.stop();
                 repaint();
-            }         
+            }
         }
 
         firePropertyChange("running", old, running);
@@ -137,35 +137,20 @@ public class FractalPanel extends javax.swing.JPanel {
             this.fractalCalculator.stop();
         }
         img.setData(blank);
-       
+
         setRunning(true);
 
-        FractalDimensionsBean frb = new FractalDimensionsBean( fact, offsetX, offsetY, abstractFractal,img.getRaster());
+        FractalDimensionsBean frb = new FractalDimensionsBean(fact, offsetX, offsetY, abstractFractal, img.getRaster());
 
-        final FractalCalculator fractalCalculatorLocal
-                = new FractalCalculator(frb, fractalColorSet, () -> {
+        fractalCalculator = new FractalCalculator(frb, fractalColorSet, () -> {
                     setRunning(false);
                 });
-        fractalCalculator = fractalCalculatorLocal;
 
-        Runnable calculationRunnable;
         if (useLambda) {
-            calculationRunnable = () -> {
-                fractalCalculatorLocal.calculate();
-            };
+            fractalCalculator.calculate();
         } else {
-            calculationRunnable = new Runnable() {
-
-                @Override
-                public void run() {
-                    fractalCalculatorLocal.calculate(getThreadPoolSize());
-                }
-            };
-
+            fractalCalculator.calculate(getThreadPoolSize());
         }
-        Thread calculationThread = new Thread(calculationRunnable);
-        calculationThread.start();
-
     }
 
     public void setUseLambda(boolean useLambda) {

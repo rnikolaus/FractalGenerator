@@ -1,10 +1,6 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package fractal.util;
 
+import java.awt.image.WritableRaster;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,31 +9,29 @@ import java.util.List;
  * @author rapnik
  */
 public class DimensionFactory {
-    final int x;
-    final int y;
-    final List<DimXY> result = new ArrayList<>();
+   
 
-    public DimensionFactory(int x, int y) {
-        this.x = x;
-        this.y = y;
+    private DimensionFactory() {
+        
     }
-    public List<DimXY> getDimensions(){
-        if (result.isEmpty()){
-            createDimensions();
-        }
-        return result;
+    public static List<DimXY> getDimensions(int x, int y){
+        
+        return createDimensions(x, y);
+    }
+    public static List<DimXY> getDimensions(FractalDimensionsBean fractalDimensionsBean){
+        return createDimensions(fractalDimensionsBean.getSizeX(), fractalDimensionsBean.getSizeY());
     }
     
     
     
-    
-    private void createDimensions() {
-       
-        for (int xLocal = 0; xLocal < this.x; xLocal ++) {
-            for (int yLocal = 0; yLocal < this.y; yLocal ++) {
+    private static List<DimXY> createDimensions(int x,int y) {
+        final List<DimXY> result = new ArrayList<>();
+        for (int xLocal = 0; xLocal < x; xLocal ++) {
+            for (int yLocal = 0; yLocal < y; yLocal ++) {
                 result.add(new DimXY(xLocal, yLocal));
             }
         }
+        return result;
         
     }
     

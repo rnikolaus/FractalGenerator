@@ -34,7 +34,7 @@ public abstract class RegularNewtonFractal extends NewtonFractal{
     @Override
     public int getResultNum(Complex complex){
         ComplexValue cv = new ComplexValue(complex, 7);
-        return getSolutions().lastIndexOf(cv);
+        return getSolutions().indexOf(cv);
     }
 
     

@@ -8,7 +8,7 @@ import org.apache.commons.math3.util.Precision;
 
 
 /**
- *
+ * This class exists, so I can use equals (to a certain precision)on complex numbers
  * @author rapnik
  */
 public class ComplexValue {
