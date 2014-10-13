@@ -6,7 +6,6 @@
 package fractal.util;
 
 import java.awt.Color;
-import java.awt.image.WritableRaster;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -21,6 +20,9 @@ import org.apache.commons.math3.complex.Complex;
  */
 public class FractalCalculator {
 
+    private ExecutorService exs;
+    private Thread calculationThread;
+
     public interface FinishCallback {
 
         public void run();
@@ -29,10 +31,9 @@ public class FractalCalculator {
     private final FractalDimensionsBean fractalDimensionsBean;
 
     private final FractalColorSet fractalColorSet;
-    private boolean running = true;
     private final FinishCallback finishCallback;
 
-    public FractalCalculator(FractalDimensionsBean fractalDimensionsBean, 
+    public FractalCalculator(FractalDimensionsBean fractalDimensionsBean,
             FractalColorSet fractalColorSet, FinishCallback finishCallback) {
         this.fractalDimensionsBean = fractalDimensionsBean;
         this.fractalColorSet = fractalColorSet;
@@ -47,67 +48,87 @@ public class FractalCalculator {
      * @param threads the number of threads in the calculation threadpool
      */
     public void calculate(int threads) {
-        Thread calculationThread = new Thread(new Runnable() {
+        exs = Executors.newFixedThreadPool(threads);
+        calculationThread = new Thread() {
 
             @Override
             public void run() {
-                ExecutorService exs = Executors.newFixedThreadPool(threads);
-                
+
                 for (final DimXY dim : DimensionFactory.getDimensions(fractalDimensionsBean)) {
-                    exs.submit(new Runnable() {
+                    if (isInterrupted()) {
+                        return;
+                    }
+                    exs.submit(new Thread() {
 
                         @Override
                         public void run() {
-                            runFunction(dim);
+                            if (isInterrupted()) {
+                                return;
+                            }
+                            int[] col = runFunction(dim);
+                            if (isInterrupted()) {
+                                return;
+                            }
+                            fractalDimensionsBean.getImgData().setPixel(dim.getX(), dim.getY(), col);
+
                         }
 
                     });
+
                 }
 
                 exs.shutdown();
                 try {
                     exs.awaitTermination(1, TimeUnit.DAYS);
                 } catch (InterruptedException ex) {
-                    Logger.getLogger(FractalCalculator.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(FractalCalculator.class.getName()).log(Level.FINEST, null, ex);
                 }
-                if (running) {
-                    finishCallback.run();
+                if (isInterrupted()) {
+                    return;
                 }
-
+                finishCallback.run();
             }
-        });
+        };
         calculationThread.start();
 
     }
 
-    private void runFunction(DimXY dim) {
-        if (!running) {
-            return;
-        }
+    private int[] runFunction(DimXY dim) {
         int x = dim.getX();
         int y = dim.getY();
         FractalResult fractalResult = fractalDimensionsBean.getAbstractFractal().calculate(getComplex(x, y));
-        if (running) {
-            Color col = fractalColorSet.getColor(fractalResult);
-            fractalDimensionsBean.getImgData().setPixel(x, y, new int[]{col.getRed(), col.getGreen(), col.getBlue()});
-        }
+
+        Color col = fractalColorSet.getColor(fractalResult);
+        return new int[]{col.getRed(), col.getGreen(), col.getBlue()};
+
     }
 
     /**
-     * calculates the fractal with lambdas and streams.
-     * It is asynchronus, so it returns immediately.
-     * If it finishes before stop() has been called,
-     * the FinishCallback will be invoked.
+     * calculates the fractal with lambdas and streams. It is asynchronus, so it
+     * returns immediately. If it finishes before stop() has been called, the
+     * FinishCallback will be invoked.
      */
     public void calculate() {
-        Thread calculationThread = new Thread(() -> {
-            DimensionFactory.getDimensions(fractalDimensionsBean).stream().parallel().forEach((DimXY dim) -> {
-                runFunction(dim);
-            });
-            if (running) {
+        calculationThread = new Thread() {
+
+            @Override
+            public void run() {
+                DimensionFactory.getDimensions(fractalDimensionsBean).stream().parallel().filter((DimXY t) -> !isInterrupted()).forEach((DimXY dim) -> {
+                    int[] col = runFunction(dim);
+                    if (isInterrupted()) {
+                        return;
+                    }
+                    fractalDimensionsBean.getImgData().setPixel(dim.getX(), dim.getY(), col);
+
+                });
+                if (isInterrupted()) {
+                    return;
+                }
                 finishCallback.run();
+
             }
-        });
+        };
+
         calculationThread.start();
     }
 
@@ -123,7 +144,13 @@ public class FractalCalculator {
      * This method stops the calculation, the FinishCallback won't run
      */
     public void stop() {
-        running = false;
+
+        if (calculationThread != null) {
+            calculationThread.interrupt();
+        }
+        if (exs != null) {
+            exs.shutdownNow();
+        }
     }
 
 }
