@@ -5,10 +5,12 @@
 package fractal.gui;
 
 import fractal.fractals.AbstractFractal;
+import fractal.util.AbstractFractalCalculator;
 import fractal.util.FractalColor;
 import fractal.util.FractalColorSet;
 import fractal.util.FractalDimensionsBean;
-import fractal.util.FractalCalculator;
+import fractal.util.StreamsFractalCalculator;
+import fractal.util.ThreadPoolFractalCalculator;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
@@ -24,7 +26,7 @@ import javax.swing.Timer;
 public class FractalPanel extends javax.swing.JPanel {
 
     transient private BufferedImage img = new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB);
-    private transient FractalCalculator fractalCalculator;
+    private transient AbstractFractalCalculator fractalCalculator;
     Raster blank = img.getData();
     boolean useLambda;
 
@@ -83,8 +85,8 @@ public class FractalPanel extends javax.swing.JPanel {
         } else {
             if (refreshTimer.isRunning()) {
                 refreshTimer.stop();
-                repaint();
             }
+            repaint();
         }
 
         firePropertyChange("running", old, running);
@@ -134,7 +136,7 @@ public class FractalPanel extends javax.swing.JPanel {
 
     private synchronized void createFract() {
         if (this.fractalCalculator != null) {
-            this.fractalCalculator.stop();
+            this.fractalCalculator.interrupt();
         }
         img.setData(blank);
 
@@ -142,15 +144,15 @@ public class FractalPanel extends javax.swing.JPanel {
 
         FractalDimensionsBean frb = new FractalDimensionsBean(fact, offsetX, offsetY, abstractFractal, img.getRaster());
 
-        fractalCalculator = new FractalCalculator(frb, fractalColorSet, () -> {
-                    setRunning(false);
-                });
 
         if (useLambda) {
-            fractalCalculator.calculate();
+            fractalCalculator = new StreamsFractalCalculator(frb, fractalColorSet,()  -> {
+            setRunning(false);});
         } else {
-            fractalCalculator.calculate(getThreadPoolSize());
+            fractalCalculator=new ThreadPoolFractalCalculator(frb, fractalColorSet, ()  -> {
+            setRunning(false);}, getThreadPoolSize());
         }
+        fractalCalculator.start();
     }
 
     public void setUseLambda(boolean useLambda) {
