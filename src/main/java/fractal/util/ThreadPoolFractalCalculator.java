@@ -12,11 +12,11 @@ import java.util.logging.Logger;
  */
 public class ThreadPoolFractalCalculator extends AbstractFractalCalculator {
 
-    private class InnerClass implements Runnable {
+    private class CalculationRunnable implements Runnable {
 
         private final DimXY dim;
 
-        public InnerClass(DimXY dim) {
+        public CalculationRunnable(DimXY dim) {
             this.dim = dim;
         }
 
@@ -29,7 +29,7 @@ public class ThreadPoolFractalCalculator extends AbstractFractalCalculator {
             if (isInterrupted()) {//don't draw if parent thread was interrupted
                 return;
             }
-            paint(dim.getX(), dim.getY(), col);
+            paint(dim, col);
         }
 
     }
@@ -37,7 +37,7 @@ public class ThreadPoolFractalCalculator extends AbstractFractalCalculator {
     private final ExecutorService exs;
 
     public ThreadPoolFractalCalculator(FractalDimensionsBean fractalDimensionsBean,
-            FractalColorSet fractalColorSet, FinishCallback finishCallback, int threads) {
+            FractalColorSet fractalColorSet, Runnable finishCallback, int threads) {
         super(fractalDimensionsBean, fractalColorSet, finishCallback);
         exs = Executors.newFixedThreadPool(threads);
     }
@@ -49,7 +49,7 @@ public class ThreadPoolFractalCalculator extends AbstractFractalCalculator {
             if (isInterrupted()) {
                 return;
             }
-            exs.submit(new InnerClass(dim));
+            exs.submit(new CalculationRunnable(dim));
 
         }
 
