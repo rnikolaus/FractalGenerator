@@ -45,7 +45,7 @@ public class ThreadPoolFractalCalculator extends AbstractFractalCalculator {
     @Override
     public void run() {
 
-        for (final DimXY dim : getDimensions()) {
+        for (final DimXY dim : getDimensionIterable()) {
             if (isInterrupted()) {
                 return;
             }

@@ -1,6 +1,7 @@
 package fractal.util;
 
 import java.awt.Color;
+import java.util.Iterator;
 import java.util.List;
 import org.apache.commons.math3.complex.Complex;
 
@@ -64,6 +65,9 @@ public abstract class AbstractFractalCalculator extends Thread {
 
     protected List<DimXY> getDimensions() {
         return DimensionFactory.getDimensions(fractalDimensionsBean);
+    }
+    protected Iterable<DimXY> getDimensionIterable(){
+        return DimensionFactory.getDimensionIterable(fractalDimensionsBean);
     }
 
     protected void runCallback() {

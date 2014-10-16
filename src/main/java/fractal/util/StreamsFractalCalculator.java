@@ -1,6 +1,5 @@
 package fractal.util;
 
-import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 
 /**
@@ -18,20 +17,20 @@ public class StreamsFractalCalculator extends AbstractFractalCalculator {
         final int sizeX = fractalDimensionsBean.getSizeX();
         final int sizeY = fractalDimensionsBean.getSizeY();
         final int pixelCount = sizeX * sizeY;
-        Stream<int[]> dimensionStream = Stream.iterate(new int[]{0, 0}, (int[] t) -> {
-            int x = t[0];
-            int y = t[1];
-            x++;
-            if (x == sizeX) {
-                x = 0;
-                y++;
+        Stream<DimXY> dimensionStream = Stream.iterate(new DimXY(0,0), (DimXY t) -> {
+            int x = t.getX();
+            int y = t.getY();
+            y++;
+            if (y == sizeY) {
+                y = 0;
+                x++;
             }
-            return new int[]{x, y};
+            return new DimXY(x,y);
         }).limit(pixelCount);
 
         dimensionStream.parallel()
-                .filter((int[] t) -> !isInterrupted())//don't calculate if parent thread was interrupted
-                .forEach((int[] dim) -> {
+                .filter((DimXY t) -> !isInterrupted())//don't calculate if parent thread was interrupted
+                .forEach((DimXY dim) -> {
                     int[] col = runFunction(dim);
                     if (isInterrupted()) {//don't draw if parent thread was interrupted
                         return;
