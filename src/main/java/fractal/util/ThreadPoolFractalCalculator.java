@@ -1,5 +1,6 @@
 package fractal.util;
 
+import java.util.Iterator;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -44,8 +45,8 @@ public class ThreadPoolFractalCalculator extends AbstractFractalCalculator {
 
     @Override
     public void run() {
-
-        for (final DimXY dim : getDimensionIterable()) {
+        for (Iterator<DimXY> producer = getDimensionProducer(); producer.hasNext();) {
+            DimXY dim = producer.next();
             if (isInterrupted()) {
                 return;
             }

@@ -28,11 +28,12 @@ public class DimensionFactory {
         return createDimensions(fractalDimensionsBean.getSizeX(), fractalDimensionsBean.getSizeY());
     }
 
-    public static Iterable<DimXY> getDimensionIterable(FractalDimensionsBean fractalDimensionsBean) {
-        return getDimensionIterable(fractalDimensionsBean.getSizeX(), fractalDimensionsBean.getSizeY());
+    public static Iterator<DimXY> getDimensionProducer(FractalDimensionsBean fractalDimensionsBean) {
+        return DimensionFactory.getDimensionProducer(fractalDimensionsBean.getSizeX(), fractalDimensionsBean.getSizeY());
     }
 
-    public static Iterable<DimXY> getDimensionIterable(int x, int y) {
+    
+    public static Iterator<DimXY> getDimensionProducer(int x, int y) {
         final int pixelCount = x * y;
         final LinkedBlockingQueue<DimXY> dimensionQueue = new LinkedBlockingQueue<DimXY>() {
 
@@ -43,12 +44,12 @@ public class DimensionFactory {
                     private int count = 0;
 
                     @Override
-                    public synchronized boolean hasNext() {
+                    public  boolean hasNext() {
                         return count < pixelCount;
                     }
 
                     @Override
-                    public synchronized DimXY next() {
+                    public  DimXY next() {
                         DimXY result = null;
                         try {
                             if (hasNext()) {
@@ -60,6 +61,7 @@ public class DimensionFactory {
                         count++;
                         return result;
                     }
+                  
                 };
             }
 
@@ -77,7 +79,7 @@ public class DimensionFactory {
         });
         dimensionCreationThread.start();
 
-        return dimensionQueue;
+        return dimensionQueue.iterator();
     }
 
     private static List<DimXY> createDimensions(int x, int y) {

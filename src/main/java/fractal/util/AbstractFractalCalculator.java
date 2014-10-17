@@ -66,8 +66,8 @@ public abstract class AbstractFractalCalculator extends Thread {
     protected List<DimXY> getDimensions() {
         return DimensionFactory.getDimensions(fractalDimensionsBean);
     }
-    protected Iterable<DimXY> getDimensionIterable(){
-        return DimensionFactory.getDimensionIterable(fractalDimensionsBean);
+    protected Iterator<DimXY> getDimensionProducer(){
+        return DimensionFactory.getDimensionProducer(fractalDimensionsBean);
     }
 
     protected void runCallback() {
