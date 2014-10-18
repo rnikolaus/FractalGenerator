@@ -1,11 +1,9 @@
 package fractal.util;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
-import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -19,13 +17,13 @@ public class DimensionFactory {
 
     }
 
-    public static List<DimXY> getDimensions(int x, int y) {
+    public static Collection<DimXY> getDimensions(int x, int y) {
 
-        return createDimensions(x, y);
+        return createDimensions(x, y, new ArrayList<>());
     }
 
-    public static List<DimXY> getDimensions(FractalDimensionsBean fractalDimensionsBean) {
-        return createDimensions(fractalDimensionsBean.getSizeX(), fractalDimensionsBean.getSizeY());
+    public static Collection<DimXY> getDimensions(FractalDimensionsBean fractalDimensionsBean) {
+        return createDimensions(fractalDimensionsBean.getSizeX(), fractalDimensionsBean.getSizeY(),new ArrayList<>());
     }
 
     public static Iterator<DimXY> getDimensionProducer(FractalDimensionsBean fractalDimensionsBean) {
@@ -34,6 +32,20 @@ public class DimensionFactory {
 
     
     public static Iterator<DimXY> getDimensionProducer(int x, int y) {
+        LinkedBlockingQueue<DimXY> dimensionQueue = getProducerQueue(x, y);
+        Thread dimensionCreationThread = new Thread(new Runnable() {
+
+            @Override
+            public void run() {
+                createDimensions(x, y, dimensionQueue);
+            }
+        });
+        dimensionCreationThread.start();
+
+        return dimensionQueue.iterator();
+    }
+
+    private static LinkedBlockingQueue<DimXY> getProducerQueue(int x, int y) {
         final int pixelCount = x * y;
         final LinkedBlockingQueue<DimXY> dimensionQueue = new LinkedBlockingQueue<DimXY>() {
 
@@ -66,24 +78,17 @@ public class DimensionFactory {
             }
 
         };
-        Thread dimensionCreationThread = new Thread(new Runnable() {
-
-            @Override
-            public void run() {
-                for (int xLocal = 0; xLocal < x; xLocal++) {
-                    for (int yLocal = 0; yLocal < y; yLocal++) {
-                        dimensionQueue.add(new DimXY(xLocal, yLocal));
-                    }
-                }
-            }
-        });
-        dimensionCreationThread.start();
-
-        return dimensionQueue.iterator();
+        return dimensionQueue;
     }
 
-    private static List<DimXY> createDimensions(int x, int y) {
-        final List<DimXY> result = new ArrayList<>();
+    /**
+     * Fills the supplied Collection and returns it
+     * @param x the x boundary 
+     * @param y the y boundary
+     * @param result the Collection to fill
+     * @return result with the dimensions
+     */
+    private static Collection<DimXY> createDimensions(int x, int y,Collection<DimXY> result) {
         for (int xLocal = 0; xLocal < x; xLocal++) {
             for (int yLocal = 0; yLocal < y; yLocal++) {
                 result.add(new DimXY(xLocal, yLocal));
