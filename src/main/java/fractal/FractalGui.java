@@ -43,34 +43,31 @@ public class FractalGui extends javax.swing.JFrame {
         jSlider2.setMinimum(1);
         jSlider2.setToolTipText("Thread pool size, the number of concurrent threads");
 
-        org.jdesktop.beansbinding.Binding binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, fractalPanel11, org.jdesktop.beansbinding.ELProperty.create("${threadPoolSize}"), jSlider2, org.jdesktop.beansbinding.BeanProperty.create("value"));
-        bindingGroup.addBinding(binding);
-
         jTextField2.setEditable(false);
         jTextField2.setHorizontalAlignment(javax.swing.JTextField.TRAILING);
 
-        binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, jSlider2, org.jdesktop.beansbinding.ELProperty.create("${value}"), jTextField2, org.jdesktop.beansbinding.BeanProperty.create("text"));
+        org.jdesktop.beansbinding.Binding binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, jSlider2, org.jdesktop.beansbinding.ELProperty.create("${value}"), jTextField2, org.jdesktop.beansbinding.BeanProperty.create("text"));
         bindingGroup.addBinding(binding);
 
         abstractFractalComboBox1.setToolTipText("Select the fractal to calculate");
-
-        binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, fractalPanel11, org.jdesktop.beansbinding.ELProperty.create("${abstractFractal}"), abstractFractalComboBox1, org.jdesktop.beansbinding.BeanProperty.create("selectedItem"));
-        bindingGroup.addBinding(binding);
 
         binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, fractalPanel11, org.jdesktop.beansbinding.ELProperty.create("${running}"), progressBar1, org.jdesktop.beansbinding.BeanProperty.create("active"));
         bindingGroup.addBinding(binding);
 
         jCheckBox1.setText("Lambdas & Streams");
         jCheckBox1.setToolTipText("Calculate the fractal with .stream().parallel instead of the \"Classic\" Threadpool");
-
-        binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, fractalPanel11, org.jdesktop.beansbinding.ELProperty.create("${useLambda}"), jCheckBox1, org.jdesktop.beansbinding.BeanProperty.create("selected"));
-        bindingGroup.addBinding(binding);
-
         jCheckBox1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jCheckBox1ActionPerformed(evt);
             }
         });
+
+        binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, abstractFractalComboBox1, org.jdesktop.beansbinding.ELProperty.create("${selectedItem}"), fractalPanel11, org.jdesktop.beansbinding.BeanProperty.create("abstractFractal"));
+        bindingGroup.addBinding(binding);
+        binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, jSlider2, org.jdesktop.beansbinding.ELProperty.create("${value_IGNORE_ADJUSTING}"), fractalPanel11, org.jdesktop.beansbinding.BeanProperty.create("threadPoolSize"));
+        bindingGroup.addBinding(binding);
+        binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, jCheckBox1, org.jdesktop.beansbinding.ELProperty.create("${selected}"), fractalPanel11, org.jdesktop.beansbinding.BeanProperty.create("useLambda"));
+        bindingGroup.addBinding(binding);
 
         javax.swing.GroupLayout fractalPanel11Layout = new javax.swing.GroupLayout(fractalPanel11);
         fractalPanel11.setLayout(fractalPanel11Layout);

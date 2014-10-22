@@ -71,7 +71,7 @@ public class FractalPanel extends javax.swing.JPanel {
 
     }
 
-    public boolean getRunning() {
+    public boolean isRunning() {
         return running;
     }
 

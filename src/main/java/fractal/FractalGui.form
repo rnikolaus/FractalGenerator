@@ -75,11 +75,6 @@
         <Property name="minimum" type="int" value="1"/>
         <Property name="toolTipText" type="java.lang.String" value="Thread pool size, the number of concurrent threads"/>
       </Properties>
-      <BindingProperties>
-        <BindingProperty name="value" source="fractalPanel11" sourcePath="${threadPoolSize}" target="jSlider2" targetPath="value" updateStrategy="0" immediately="false">
-          <BindingParameter name="IGNORE_ADJUSTING" value="N"/>
-        </BindingProperty>
-      </BindingProperties>
     </Component>
     <Component class="javax.swing.JTextField" name="jTextField2">
       <Properties>
@@ -96,9 +91,6 @@
       <Properties>
         <Property name="toolTipText" type="java.lang.String" value="Select the fractal to calculate"/>
       </Properties>
-      <BindingProperties>
-        <BindingProperty name="selectedItem" source="fractalPanel11" sourcePath="${abstractFractal}" target="abstractFractalComboBox1" targetPath="selectedItem" updateStrategy="0" immediately="false"/>
-      </BindingProperties>
     </Component>
     <Component class="fractal.gui.ProgressBar" name="progressBar1">
       <BindingProperties>
@@ -110,14 +102,16 @@
         <Property name="text" type="java.lang.String" value="Lambdas &amp; Streams"/>
         <Property name="toolTipText" type="java.lang.String" value="Calculate the fractal with .stream().parallel instead of the &quot;Classic&quot; Threadpool"/>
       </Properties>
-      <BindingProperties>
-        <BindingProperty name="selected" source="fractalPanel11" sourcePath="${useLambda}" target="jCheckBox1" targetPath="selected" updateStrategy="0" immediately="false"/>
-      </BindingProperties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jCheckBox1ActionPerformed"/>
       </Events>
     </Component>
     <Container class="fractal.gui.FractalPanel" name="fractalPanel11">
+      <BindingProperties>
+        <BindingProperty name="abstractFractal" source="abstractFractalComboBox1" sourcePath="${selectedItem}" target="fractalPanel11" targetPath="abstractFractal" updateStrategy="0" immediately="false"/>
+        <BindingProperty name="threadPoolSize" source="jSlider2" sourcePath="${value_IGNORE_ADJUSTING}" target="fractalPanel11" targetPath="threadPoolSize" updateStrategy="0" immediately="false"/>
+        <BindingProperty name="useLambda" source="jCheckBox1" sourcePath="${selected}" target="fractalPanel11" targetPath="useLambda" updateStrategy="0" immediately="false"/>
+      </BindingProperties>
 
       <Layout>
         <DimensionLayout dim="0">
