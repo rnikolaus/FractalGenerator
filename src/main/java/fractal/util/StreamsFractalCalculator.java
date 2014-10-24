@@ -17,7 +17,7 @@ public class StreamsFractalCalculator extends AbstractFractalCalculator {
         final int sizeX = fractalDimensionsBean.getSizeX();
         final int sizeY = fractalDimensionsBean.getSizeY();
         final int pixelCount = sizeX * sizeY;
-        Stream<DimXY> dimensionStream = Stream.iterate(new DimXY(0,0), (DimXY t) -> {
+        Stream<DimXY> dimensionStream = Stream.iterate(new DimXY(0, 0), (DimXY t) -> {
             int x = t.getX();
             int y = t.getY();
             y++;
@@ -25,16 +25,15 @@ public class StreamsFractalCalculator extends AbstractFractalCalculator {
                 y = 0;
                 x++;
             }
-            return new DimXY(x,y);
+            return new DimXY(x, y);
         }).limit(pixelCount);
 
         dimensionStream.parallel()
-                .filter((DimXY t) -> !isInterrupted())//don't calculate if parent thread was interrupted
                 .forEach((DimXY dim) -> {
-                    int[] col = runFunction(dim);
-                    if (isInterrupted()) {//don't draw if parent thread was interrupted
+                    if (isInterrupted()) {
                         return;
                     }
+                    int[] col = runFunction(dim);
                     paint(dim, col);
 
                 });

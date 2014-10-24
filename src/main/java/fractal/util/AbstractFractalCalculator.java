@@ -3,7 +3,6 @@ package fractal.util;
 import java.awt.Color;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
 import org.apache.commons.math3.complex.Complex;
 
 /**
@@ -32,16 +31,15 @@ public abstract class AbstractFractalCalculator extends Thread {
     }
 
     protected int[] runFunction(int x, int y) {
-
         FractalResult fractalResult = fractalDimensionsBean.getAbstractFractal().calculate(getComplex(x, y));
-
         Color col = fractalColorSet.getColor(fractalResult);
         return new int[]{col.getRed(), col.getGreen(), col.getBlue()};
-
     }
 
     protected void paint(int x, int y, int[] col) {
-        fractalDimensionsBean.getImgData().setPixel(x, y, col);
+        if (!isInterrupted()){
+            fractalDimensionsBean.getImgData().setPixel(x, y, col);
+        }
     }
 
     protected void paint(int[] dim, int[] col) {

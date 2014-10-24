@@ -27,9 +27,6 @@ public class ThreadPoolFractalCalculator extends AbstractFractalCalculator {
                 return;
             }
             int[] col = runFunction(dim);
-            if (isInterrupted()) {//don't draw if parent thread was interrupted
-                return;
-            }
             paint(dim, col);
         }
 
@@ -45,6 +42,7 @@ public class ThreadPoolFractalCalculator extends AbstractFractalCalculator {
 
     @Override
     public void run() {
+        try {
         for (Iterator<DimXY> producer = getDimensionProducer(); producer.hasNext();) {
             DimXY dim = producer.next();
             if (isInterrupted()) {
@@ -55,7 +53,7 @@ public class ThreadPoolFractalCalculator extends AbstractFractalCalculator {
         }
 
         exs.shutdown();
-        try {
+        
             exs.awaitTermination(1, TimeUnit.DAYS);
         } catch (InterruptedException ex) {
             Logger.getLogger(ThreadPoolFractalCalculator.class.getName()).log(Level.FINEST, null, ex);

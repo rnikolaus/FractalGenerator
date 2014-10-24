@@ -38,10 +38,12 @@ public class FractalGui extends javax.swing.JFrame {
         fractalPanel11 = new fractal.gui.FractalPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Fractal Generator");
 
         jSlider2.setMaximum(20);
         jSlider2.setMinimum(1);
         jSlider2.setToolTipText("Thread pool size, the number of concurrent threads");
+        jSlider2.setValue(1);
 
         jTextField2.setEditable(false);
         jTextField2.setHorizontalAlignment(javax.swing.JTextField.TRAILING);

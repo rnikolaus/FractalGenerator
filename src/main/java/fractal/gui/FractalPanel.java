@@ -12,6 +12,7 @@ import fractal.util.FractalDimensionsBean;
 import fractal.util.StreamsFractalCalculator;
 import fractal.util.ThreadPoolFractalCalculator;
 import java.awt.Graphics;
+import java.awt.Image;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
@@ -33,7 +34,7 @@ public class FractalPanel extends javax.swing.JPanel {
     double fact, offsetX, offsetY;
     final private FractalColorSet fractalColorSet = new FractalColorSet();
 
-    Timer deferredTimer = new Timer(50, (ActionEvent e) -> {
+    Timer deferredTimer = new Timer(100, (ActionEvent e) -> {
         deferredAction();
     });
     //Timer for repainting the panel to make the progress visible
@@ -42,11 +43,6 @@ public class FractalPanel extends javax.swing.JPanel {
     });
 
     private void deferredAction() {
-
-        int sizeX = getWidth();
-        int sizeY = getHeight();
-        img = new BufferedImage(sizeX, sizeY, BufferedImage.TYPE_INT_RGB);
-        blank = img.getData();
         createFract();
     }
     private boolean running;
@@ -134,12 +130,14 @@ public class FractalPanel extends javax.swing.JPanel {
         calculateFractalDeferred();
     }
 
-    private synchronized void createFract() {
+    private void stopCalculation(){
         if (this.fractalCalculator != null) {
             this.fractalCalculator.interrupt();
         }
+    }
+    private synchronized void createFract() {
+        stopCalculation();
         img.setData(blank);
-
         setRunning(true);
 
         FractalDimensionsBean frb = new FractalDimensionsBean(fact, offsetX, offsetY, abstractFractal, img.getRaster());
@@ -217,16 +215,22 @@ public class FractalPanel extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void formComponentResized(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentResized
+        int sizeX = getWidth();
+        int sizeY = getHeight();
+        img = new BufferedImage(sizeX, sizeY, BufferedImage.TYPE_INT_RGB);
+        blank = img.getData();
         calculateFractalDeferred();
     }//GEN-LAST:event_formComponentResized
 
     private void formMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_formMouseClicked
+        stopCalculation();
         Point p = ((java.awt.event.MouseEvent) evt).getPoint();
         rescale(p, 10.0, (((java.awt.event.MouseEvent) evt).getButton() == MouseEvent.BUTTON1));
         calculateFractalDeferred();
     }//GEN-LAST:event_formMouseClicked
 
     private void formMouseWheelMoved(java.awt.event.MouseWheelEvent evt) {//GEN-FIRST:event_formMouseWheelMoved
+        stopCalculation();
         Point p = ((java.awt.event.MouseEvent) evt).getPoint();
         double amount = ((java.awt.event.MouseWheelEvent) evt).getScrollAmount() / 2.0;
         rescale(p, amount, (((java.awt.event.MouseWheelEvent) evt).getWheelRotation() == -1));
