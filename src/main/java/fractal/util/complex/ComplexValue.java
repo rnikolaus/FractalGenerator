@@ -1,5 +1,3 @@
-
-
 package fractal.util.complex;
 
 import java.math.BigDecimal;

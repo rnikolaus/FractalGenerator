@@ -1,5 +1,7 @@
 package fractal.util;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Stream;
 
 /**
@@ -27,20 +29,17 @@ public class StreamsFractalCalculator extends AbstractFractalCalculator {
             }
             return new DimXY(x, y);
         }).limit(pixelCount);
+        try {
+            dimensionStream.parallel()
+                    .forEach((DimXY dim) -> {
+                        int[] col = runFunction(dim);
+                        paint(dim, col);
+                    });
 
-        dimensionStream.parallel()
-                .forEach((DimXY dim) -> {
-                    if (isInterrupted()) {
-                        return;
-                    }
-                    int[] col = runFunction(dim);
-                    paint(dim, col);
-
-                });
-        if (isInterrupted()) {
-            return;
+            runCallback();
+        } catch (RuntimeException ex) {
+            Logger.getLogger(StreamsFractalCalculator.class.getName()).log(Level.FINEST, null, ex);
         }
-        runCallback();
 
     }
 

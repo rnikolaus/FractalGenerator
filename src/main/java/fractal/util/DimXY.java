@@ -1,4 +1,3 @@
-
 package fractal.util;
 
 /**

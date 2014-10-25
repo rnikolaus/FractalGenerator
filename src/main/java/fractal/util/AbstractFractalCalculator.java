@@ -23,6 +23,9 @@ public abstract class AbstractFractalCalculator extends Thread {
     }
 
     protected int[] runFunction(DimXY dim) {
+        if (isInterrupted()) {
+            throw new RuntimeException("Thread was interrupted");
+        }
         return runFunction(dim.getX(), dim.getY());
     }
 
@@ -37,9 +40,10 @@ public abstract class AbstractFractalCalculator extends Thread {
     }
 
     protected void paint(int x, int y, int[] col) {
-        if (!isInterrupted()){
-            fractalDimensionsBean.getImgData().setPixel(x, y, col);
+        if (isInterrupted()) {
+            throw new RuntimeException("Thread was interrupted");
         }
+        fractalDimensionsBean.getImgData().setPixel(x, y, col);
     }
 
     protected void paint(int[] dim, int[] col) {
@@ -47,12 +51,12 @@ public abstract class AbstractFractalCalculator extends Thread {
         int y = dim[1];
         paint(x, y, col);
     }
+
     protected void paint(DimXY dim, int[] col) {
         int x = dim.getX();
         int y = dim.getY();
         paint(x, y, col);
     }
-    
 
     private Complex getComplex(int x, int y) {
         double real = fractalDimensionsBean.getFactor()
@@ -63,10 +67,11 @@ public abstract class AbstractFractalCalculator extends Thread {
     }
 
     protected Collection<DimXY> getDimensions() {
-        return DimensionFactory.getDimensions(fractalDimensionsBean);
+        return DimensionCreator.getDimensions(fractalDimensionsBean);
     }
-    protected Iterator<DimXY> getDimensionProducer(){
-        return DimensionFactory.getDimensionProducer(fractalDimensionsBean);
+
+    protected Iterator<DimXY> getDimensionProducer() {
+        return DimensionCreator.getDimensionProducer(fractalDimensionsBean);
     }
 
     protected void runCallback() {

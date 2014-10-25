@@ -3,6 +3,7 @@ package fractal.util;
 import java.util.Iterator;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -23,9 +24,6 @@ public class ThreadPoolFractalCalculator extends AbstractFractalCalculator {
 
         @Override
         public void run() {
-            if (isInterrupted()) {//don't calculate if parent thread was interrupted
-                return;
-            }
             int[] col = runFunction(dim);
             paint(dim, col);
         }
@@ -43,31 +41,23 @@ public class ThreadPoolFractalCalculator extends AbstractFractalCalculator {
     @Override
     public void run() {
         try {
-        for (Iterator<DimXY> producer = getDimensionProducer(); producer.hasNext();) {
-            DimXY dim = producer.next();
-            if (isInterrupted()) {
-                return;
+            for (Iterator<DimXY> producer = getDimensionProducer(); producer.hasNext();) {
+                DimXY dim = producer.next();
+                exs.submit(new CalculationRunnable(dim));
             }
-            exs.submit(new CalculationRunnable(dim));
-
-        }
-
-        exs.shutdown();
-        
+            exs.shutdown();
             exs.awaitTermination(1, TimeUnit.DAYS);
-        } catch (InterruptedException ex) {
+            runCallback();
+        } catch (InterruptedException | RejectedExecutionException ex) {
             Logger.getLogger(ThreadPoolFractalCalculator.class.getName()).log(Level.FINEST, null, ex);
         }
-        if (isInterrupted()) {
-            return;
-        }
-        runCallback();
     }
 
     @Override
     public void interrupt() {
-        super.interrupt();
         exs.shutdownNow();
+        super.interrupt();
+
     }
 
 }
