@@ -12,12 +12,13 @@ import fractal.util.FractalDimensionsBean;
 import fractal.util.StreamsFractalCalculator;
 import fractal.util.ThreadPoolFractalCalculator;
 import java.awt.Graphics;
-import java.awt.Image;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.awt.image.Raster;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.Timer;
 
 /**
@@ -133,6 +134,11 @@ public class FractalPanel extends javax.swing.JPanel {
     private void stopCalculation(){
         if (this.fractalCalculator != null) {
             this.fractalCalculator.interrupt();
+            try {
+                fractalCalculator.join();
+            } catch (InterruptedException ex) {
+                Logger.getLogger(FractalPanel.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
     }
     private synchronized void createFract() {
