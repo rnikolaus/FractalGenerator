@@ -6,13 +6,19 @@ import org.apache.commons.math3.util.Precision;
 
 
 /**
- * This class exists, so I can use equals (to a certain precision)on complex numbers
+ * This is a wrapper for Complex, that allows equals
  * @author rapnik
  */
 public class ComplexValue {
     private final BigDecimal real;
     private final BigDecimal imaginary;
 
+    /**
+     * The real and imaginary values of the given Complex 
+     * are rounded to precision
+     * @param complex
+     * @param precision 
+     */
     public ComplexValue(Complex complex,int precision) {
         real = BigDecimal.valueOf(Precision.round(complex.getReal(), precision));
         imaginary = BigDecimal.valueOf(Precision.round(complex.getImaginary(), precision));
@@ -35,10 +41,13 @@ public class ComplexValue {
             return false;
         }
         final ComplexValue other = (ComplexValue) obj;
-        if (this.real != other.real && (this.real == null || !this.real.equals(other.real))) {
+        if (this.real != other.real && (this.real == null 
+                || !this.real.equals(other.real))) {
             return false;
         }
-        return this.imaginary == other.imaginary || (this.imaginary != null && this.imaginary.equals(other.imaginary));
+        return this.imaginary == other.imaginary 
+                || (this.imaginary != null 
+                && this.imaginary.equals(other.imaginary));
     }
     
     public Complex getApacheComplex(){
