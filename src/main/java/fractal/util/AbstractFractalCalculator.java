@@ -3,6 +3,7 @@ package fractal.util;
 import java.awt.Color;
 import java.util.Collection;
 import java.util.Iterator;
+import javax.swing.SwingUtilities;
 import org.apache.commons.math3.complex.Complex;
 
 /**
@@ -43,7 +44,10 @@ public abstract class AbstractFractalCalculator extends Thread {
         if (isInterrupted()) {
             throw new RuntimeException("Thread was interrupted");
         }
-        fractalDimensionsBean.getImgData().setPixel(x, y, col);
+        SwingUtilities.invokeLater(() -> {
+            fractalDimensionsBean.getImgData().setPixel(x, y, col);
+        });
+        
     }
 
     protected void paint(int[] dim, int[] col) {
@@ -75,6 +79,6 @@ public abstract class AbstractFractalCalculator extends Thread {
     }
 
     protected void runCallback() {
-        finishCallback.run();
+        SwingUtilities.invokeLater(finishCallback);
     }
 }
