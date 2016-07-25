@@ -3,9 +3,6 @@ package fractal.util;
 
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.TimeUnit;
-import javax.swing.SwingUtilities;
 import org.apache.commons.math3.complex.Complex;
 
 /**
@@ -65,6 +62,6 @@ public abstract class AbstractFractalCalculator extends Thread {
     }
 
     protected void runCallback() {
-        SwingUtilities.invokeLater(finishCallback);
+        finishCallback.run();
     }
 }

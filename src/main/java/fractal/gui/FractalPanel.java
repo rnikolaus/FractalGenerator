@@ -100,6 +100,7 @@ public class FractalPanel extends javax.swing.JPanel {
     }
 
     private void setRunning(boolean running) {
+        SwingUtilities.invokeLater(() -> { 
         boolean old = this.running;
         this.running = running;
         if (running) {
@@ -114,6 +115,7 @@ public class FractalPanel extends javax.swing.JPanel {
         }
 
         firePropertyChange("running", old, running);
+        });
     }
 
     public void setThreadPoolSize(int threadPoolSize) {
