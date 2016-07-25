@@ -26,4 +26,9 @@ public class FractalColorSet {
         int num = fractalResult.getResult() %fractalColors.size();
         return fractalColors.get(num).getColor(fractalResult.getIterations());
     }
+    
+    public int[] getColors(FractalResult fractalResult){
+        Color color = getColor(fractalResult);
+        return new int[]{color.getRed(),color.getGreen(),color.getBlue()};
+    }
 }

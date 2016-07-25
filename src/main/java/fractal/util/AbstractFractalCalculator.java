@@ -1,6 +1,6 @@
 package fractal.util;
 
-import java.awt.Color;
+
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -64,33 +64,11 @@ public abstract class AbstractFractalCalculator extends Thread {
 
     protected FractalPixel runFunction(int x, int y) {
         FractalResult fractalResult = fractalDimensionsBean.getAbstractFractal().calculate(getComplex(x, y));
-        Color col = fractalColorSet.getColor(fractalResult);
-        FractalPixel result = new FractalPixel(x, y, new int[]{col.getRed(), col.getGreen(), col.getBlue()});
+        FractalPixel result = new FractalPixel(x, y, fractalColorSet.getColors(fractalResult));
         return result;
     }
 
-    protected void paint(int x, int y, int[] col) {
-        if (isInterrupted()) {
-            throw new RuntimeException("Thread was interrupted");
-        }
-        SwingUtilities.invokeLater(() -> {
-            fractalDimensionsBean.getImgData().setPixel(x, y, col);
-        });
-        
-    }
-
-    protected void paint(int[] dim, int[] col) {
-        int x = dim[0];
-        int y = dim[1];
-        paint(x, y, col);
-    }
-
-    protected void paint(DimXY dim, int[] col) {
-        int x = dim.getX();
-        int y = dim.getY();
-        paint(x, y, col);
-    }
-
+    
     private Complex getComplex(int x, int y) {
         double real = fractalDimensionsBean.getFactor()
                 * (x - fractalDimensionsBean.getSizeX() / 2.0) + fractalDimensionsBean.getOffsetX();
