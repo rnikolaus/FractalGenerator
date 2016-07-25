@@ -32,8 +32,8 @@ public class StreamsFractalCalculator extends AbstractFractalCalculator {
         try {
             dimensionStream.parallel()
                     .forEach((DimXY dim) -> {
-                        int[] col = runFunction(dim);
-                        paint(dim, col);
+                        getPixelQueue().add(runFunction(dim));
+                        
                     });
 
             runCallback();

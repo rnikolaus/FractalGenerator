@@ -24,8 +24,7 @@ public class ThreadPoolFractalCalculator extends AbstractFractalCalculator {
 
         @Override
         public void run() {
-            int[] col = runFunction(dim);
-            paint(dim, col);
+            getPixelQueue().add(runFunction(dim));
         }
 
     }
