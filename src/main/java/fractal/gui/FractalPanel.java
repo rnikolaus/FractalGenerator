@@ -9,6 +9,8 @@ import fractal.util.AbstractFractalCalculator;
 import fractal.util.FractalColor;
 import fractal.util.FractalColorSet;
 import fractal.util.FractalConfigBean;
+import fractal.util.FractalPixel;
+import fractal.util.PixelQueue;
 import fractal.util.StreamsFractalCalculator;
 import fractal.util.ThreadPoolFractalCalculator;
 import java.awt.Graphics;
@@ -17,8 +19,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.awt.image.Raster;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 
 /**
@@ -31,6 +36,7 @@ public class FractalPanel extends javax.swing.JPanel {
     private transient AbstractFractalCalculator fractalCalculator;
     Raster blank = img.getData();
     boolean useLambda;
+    private final PixelQueue pixelQueue;
 
     double fact, offsetX, offsetY;
     final private FractalColorSet fractalColorSet = new FractalColorSet();
@@ -65,6 +71,27 @@ public class FractalPanel extends javax.swing.JPanel {
         fractalColorSet.addFractalColor(new FractalColor(10, 10, 0));
         fractalColorSet.addFractalColor(new FractalColor(10, 0, 10));
         fractalColorSet.addFractalColor(new FractalColor(0, 10, 10));
+        pixelQueue = new PixelQueue(new PixelQueue.HandlePixelQueue() {
+
+            @Override
+            public void run(LinkedBlockingQueue<FractalPixel> queue) {
+                SwingUtilities.invokeLater(() -> { 
+                
+        
+                while (!queue.isEmpty()){
+                    try {
+                        FractalPixel fp =queue.poll(1, TimeUnit.SECONDS);
+                        img.getRaster().setPixel(fp.getX(), fp.getY(), fp.getCol());
+                    } catch (InterruptedException ex) {
+                        
+                    }
+                }
+                
+        
+        });
+                
+            }
+        });
 
     }
 
@@ -146,7 +173,7 @@ public class FractalPanel extends javax.swing.JPanel {
         img.setData(blank);
         setRunning(true);
 
-        FractalConfigBean frb = new FractalConfigBean(fact, offsetX, offsetY ,fractalColorSet, abstractFractal, img.getRaster());
+        FractalConfigBean frb = new FractalConfigBean(fact, offsetX, offsetY ,fractalColorSet, abstractFractal, img.getRaster().getWidth(),img.getRaster().getHeight(),pixelQueue);
 
 
         if (useLambda) {

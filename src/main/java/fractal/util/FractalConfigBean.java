@@ -1,24 +1,29 @@
 package fractal.util;
 
 import fractal.fractals.AbstractFractal;
-import java.awt.image.WritableRaster;
 
    public class FractalConfigBean {
 
-        final private WritableRaster imgData;
+       
         final private double factor;
         final private double offsetX;
         final private double offsetY;
         final private AbstractFractal abstractFractal;
         final private FractalColorSet fractalColorSet;
+        final private int width;
+        final private int height;
+        final private PixelQueue pixelQueue;
 
-        public FractalConfigBean(double factor, double offsetX, double offsetY,FractalColorSet fcs,AbstractFractal abstractFractal1,WritableRaster imgData) {
+        public FractalConfigBean(double factor, double offsetX, double offsetY,FractalColorSet fcs,AbstractFractal abstractFractal1,int width, int height ,PixelQueue pixelqueue) {
             this.factor = factor;
             this.offsetX = offsetX;
             this.offsetY = offsetY;
             this.abstractFractal = abstractFractal1;
-            this.imgData = imgData;
+            this.pixelQueue = pixelqueue;
+            
             this.fractalColorSet = fcs;
+            this.width = width;
+            this.height = height;
         }
         
         
@@ -50,16 +55,18 @@ import java.awt.image.WritableRaster;
         public AbstractFractal getAbstractFractal(){
             return abstractFractal;
         }
-        public WritableRaster getImgData(){
-            return imgData;
-        }
+        
         
         public int getSizeX(){
-            return imgData.getWidth();
+            return width;
         }
         public int getSizeY(){
-            return imgData.getHeight();
+            return height;
         }
+
+    PixelQueue getPixelQueue() {
+        return pixelQueue;
+    }
 
     
 

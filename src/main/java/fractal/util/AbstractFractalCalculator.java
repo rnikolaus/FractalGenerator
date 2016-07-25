@@ -17,38 +17,17 @@ public abstract class AbstractFractalCalculator extends Thread {
     protected final FractalConfigBean fractalDimensionsBean;
    
     private final Runnable finishCallback;
-    private final PixelQueue pixelqueue;
+   
 
     public AbstractFractalCalculator(FractalConfigBean fractalDimensionsBean,  Runnable finishCallback) {
         this.fractalDimensionsBean = fractalDimensionsBean;
         
         this.finishCallback = finishCallback;
         this.setPriority(MIN_PRIORITY);
-        pixelqueue = new PixelQueue(new PixelQueue.HandlePixelQueue() {
-
-            @Override
-            public void run(LinkedBlockingQueue<FractalPixel> queue) {
-                SwingUtilities.invokeLater(() -> { 
-                if (isInterrupted()) {
-            throw new RuntimeException("Thread was interrupted");
-        }
-                while (!queue.isEmpty()){
-                    try {
-                        FractalPixel fp =queue.poll(1, TimeUnit.SECONDS);
-                        fractalDimensionsBean.getImgData().setPixel(fp.getX(), fp.getY(), fp.getCol());
-                    } catch (InterruptedException ex) {
-                        
-                    }
-                }
-                
         
-        });
-                
-            }
-        });
     }
     public PixelQueue getPixelQueue(){
-        return pixelqueue;
+        return fractalDimensionsBean.getPixelQueue();
     }
 
     protected FractalPixel runFunction(DimXY dim) {
