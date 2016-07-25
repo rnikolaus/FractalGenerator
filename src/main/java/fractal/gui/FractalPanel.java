@@ -8,7 +8,7 @@ import fractal.fractals.AbstractFractal;
 import fractal.util.AbstractFractalCalculator;
 import fractal.util.FractalColor;
 import fractal.util.FractalColorSet;
-import fractal.util.FractalDimensionsBean;
+import fractal.util.FractalConfigBean;
 import fractal.util.StreamsFractalCalculator;
 import fractal.util.ThreadPoolFractalCalculator;
 import java.awt.Graphics;
@@ -146,14 +146,14 @@ public class FractalPanel extends javax.swing.JPanel {
         img.setData(blank);
         setRunning(true);
 
-        FractalDimensionsBean frb = new FractalDimensionsBean(fact, offsetX, offsetY, abstractFractal, img.getRaster());
+        FractalConfigBean frb = new FractalConfigBean(fact, offsetX, offsetY ,fractalColorSet, abstractFractal, img.getRaster());
 
 
         if (useLambda) {
-            fractalCalculator = new StreamsFractalCalculator(frb, fractalColorSet,()  -> {
+            fractalCalculator = new StreamsFractalCalculator(frb, ()  -> {
             setRunning(false);});
         } else {
-            fractalCalculator=new ThreadPoolFractalCalculator(frb, fractalColorSet, ()  -> {
+            fractalCalculator=new ThreadPoolFractalCalculator(frb,  ()  -> {
             setRunning(false);}, getThreadPoolSize());
         }
         fractalCalculator.start();

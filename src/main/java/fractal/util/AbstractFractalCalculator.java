@@ -14,14 +14,14 @@ import org.apache.commons.math3.complex.Complex;
  */
 public abstract class AbstractFractalCalculator extends Thread {
 
-    protected final FractalDimensionsBean fractalDimensionsBean;
-    private final FractalColorSet fractalColorSet;
+    protected final FractalConfigBean fractalDimensionsBean;
+   
     private final Runnable finishCallback;
     private final PixelQueue pixelqueue;
 
-    public AbstractFractalCalculator(FractalDimensionsBean fractalDimensionsBean, FractalColorSet fractalColorSet, Runnable finishCallback) {
+    public AbstractFractalCalculator(FractalConfigBean fractalDimensionsBean,  Runnable finishCallback) {
         this.fractalDimensionsBean = fractalDimensionsBean;
-        this.fractalColorSet = fractalColorSet;
+        
         this.finishCallback = finishCallback;
         this.setPriority(MIN_PRIORITY);
         pixelqueue = new PixelQueue(new PixelQueue.HandlePixelQueue() {
@@ -64,7 +64,7 @@ public abstract class AbstractFractalCalculator extends Thread {
 
     protected FractalPixel runFunction(int x, int y) {
         FractalResult fractalResult = fractalDimensionsBean.getAbstractFractal().calculate(getComplex(x, y));
-        FractalPixel result = new FractalPixel(x, y, fractalColorSet.getColors(fractalResult));
+        FractalPixel result = new FractalPixel(x, y, fractalDimensionsBean.getFractalColorSet().getColors(fractalResult));
         return result;
     }
 

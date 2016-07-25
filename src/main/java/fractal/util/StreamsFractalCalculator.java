@@ -10,8 +10,8 @@ import java.util.stream.Stream;
  */
 public class StreamsFractalCalculator extends AbstractFractalCalculator {
 
-    public StreamsFractalCalculator(FractalDimensionsBean fractalDimensionsBean, FractalColorSet fractalColorSet, Runnable finishCallback) {
-        super(fractalDimensionsBean, fractalColorSet, finishCallback);
+    public StreamsFractalCalculator(FractalConfigBean fractalDimensionsBean,  Runnable finishCallback) {
+        super(fractalDimensionsBean, finishCallback);
     }
 
     @Override

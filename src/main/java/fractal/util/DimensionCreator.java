@@ -22,11 +22,11 @@ public class DimensionCreator {
         return createDimensions(x, y, new ArrayList<>());
     }
 
-    public static Collection<DimXY> getDimensions(FractalDimensionsBean fractalDimensionsBean) {
+    public static Collection<DimXY> getDimensions(FractalConfigBean fractalDimensionsBean) {
         return createDimensions(fractalDimensionsBean.getSizeX(), fractalDimensionsBean.getSizeY(),new ArrayList<>());
     }
 
-    public static Iterator<DimXY> getDimensionProducer(FractalDimensionsBean fractalDimensionsBean) {
+    public static Iterator<DimXY> getDimensionProducer(FractalConfigBean fractalDimensionsBean) {
         return DimensionCreator.getDimensionProducer(fractalDimensionsBean.getSizeX(), fractalDimensionsBean.getSizeY());
     }
 

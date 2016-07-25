@@ -31,9 +31,9 @@ public class ThreadPoolFractalCalculator extends AbstractFractalCalculator {
 
     private final ExecutorService exs;
 
-    public ThreadPoolFractalCalculator(FractalDimensionsBean fractalDimensionsBean,
-            FractalColorSet fractalColorSet, Runnable finishCallback, int threads) {
-        super(fractalDimensionsBean, fractalColorSet, finishCallback);
+    public ThreadPoolFractalCalculator(FractalConfigBean fractalDimensionsBean,
+            Runnable finishCallback, int threads) {
+        super(fractalDimensionsBean, finishCallback);
         exs = Executors.newFixedThreadPool(threads);
     }
 
