@@ -14,41 +14,34 @@ import java.util.concurrent.LinkedBlockingQueue;
  * @author rapnik
  */
 public class PixelQueue {
-    public interface HandlePixelQueue{
-        public abstract void run( PixelQueue queue );
+
+    public interface RenderPixels {
+
+        public abstract void run(PixelQueue queue);
     }
     private final LinkedBlockingQueue<FractalPixel> queue = new LinkedBlockingQueue<>();
-    private final HandlePixelQueue handlepixelqueue;
+    private final RenderPixels renderPixels;
     private boolean signal;
 
-    public PixelQueue(HandlePixelQueue handlepixelqueue) {
-        this.handlepixelqueue = handlepixelqueue;
+    public PixelQueue(RenderPixels renderPixels) {
+        this.renderPixels = renderPixels;
     }
-    
-    
-    public void add(FractalPixel fp){
+
+    public void add(FractalPixel fp) {
         queue.add(fp);
-        synchronized(this){
-        if (!queue.isEmpty()&&!signal){
-            signal = true;
-            handlepixelqueue.run(this);
-        }
-        }
-    }
-    public void add(Collection<FractalPixel> cfp ){
-        queue.addAll(cfp);
-        synchronized(this){
-        if (!queue.isEmpty()&&!signal){
-            signal = true;
-            handlepixelqueue.run(this);
-        }
+        synchronized (this) {
+            if (!queue.isEmpty() && !signal) {
+                signal = true;
+                renderPixels.run(this);
+            }
         }
     }
-    public Collection<FractalPixel> getPixels(){
+
+    public Collection<FractalPixel> getPixels() {
         Collection<FractalPixel> result = new ArrayList<>();
-        synchronized(this){
-        this.queue.drainTo(result);
-        signal = false;
+        synchronized (this) {
+            this.queue.drainTo(result);
+            signal = false;
         }
         return result;
     }

@@ -19,8 +19,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.awt.image.Raster;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.SwingUtilities;
@@ -68,7 +66,7 @@ public class FractalPanel extends javax.swing.JPanel {
         fractalColorSet.addFractalColor(new FractalColor(10, 10, 0));
         fractalColorSet.addFractalColor(new FractalColor(10, 0, 10));
         fractalColorSet.addFractalColor(new FractalColor(0, 10, 10));
-        pixelQueue = new PixelQueue(new PixelQueue.HandlePixelQueue() {
+        pixelQueue = new PixelQueue(new PixelQueue.RenderPixels() {
 
             @Override
             public void run(PixelQueue queue) {
