@@ -18,27 +18,38 @@ public class PixelQueue {
         public abstract void run( PixelQueue queue );
     }
     private final LinkedBlockingQueue<FractalPixel> queue = new LinkedBlockingQueue<>();
-    HandlePixelQueue handlepixelqueue;
+    private final HandlePixelQueue handlepixelqueue;
+    private boolean signal;
 
     public PixelQueue(HandlePixelQueue handlepixelqueue) {
         this.handlepixelqueue = handlepixelqueue;
     }
     
+    
     public void add(FractalPixel fp){
         queue.add(fp);
-        if (!queue.isEmpty()){
+        synchronized(this){
+        if (!queue.isEmpty()&&!signal){
+            signal = true;
             handlepixelqueue.run(this);
+        }
         }
     }
     public void add(Collection<FractalPixel> cfp ){
         queue.addAll(cfp);
-        if (!queue.isEmpty()){
+        synchronized(this){
+        if (!queue.isEmpty()&&!signal){
+            signal = true;
             handlepixelqueue.run(this);
+        }
         }
     }
     public Collection<FractalPixel> getPixels(){
         Collection<FractalPixel> result = new ArrayList<>();
+        synchronized(this){
         this.queue.drainTo(result);
+        signal = false;
+        }
         return result;
     }
 }
