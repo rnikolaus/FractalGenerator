@@ -5,6 +5,7 @@
  */
 package fractal.util;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -14,7 +15,7 @@ import java.util.concurrent.LinkedBlockingQueue;
  */
 public class PixelQueue {
     public interface HandlePixelQueue{
-        public abstract void run( LinkedBlockingQueue<FractalPixel> queue );
+        public abstract void run( PixelQueue queue );
     }
     private final LinkedBlockingQueue<FractalPixel> queue = new LinkedBlockingQueue<>();
     HandlePixelQueue handlepixelqueue;
@@ -25,10 +26,19 @@ public class PixelQueue {
     
     public void add(FractalPixel fp){
         queue.add(fp);
-        handlepixelqueue.run(queue);
+        if (!queue.isEmpty()){
+            handlepixelqueue.run(this);
+        }
     }
     public void add(Collection<FractalPixel> cfp ){
         queue.addAll(cfp);
-        handlepixelqueue.run(queue);
+        if (!queue.isEmpty()){
+            handlepixelqueue.run(this);
+        }
+    }
+    public Collection<FractalPixel> getPixels(){
+        Collection<FractalPixel> result = new ArrayList<>();
+        this.queue.drainTo(result);
+        return result;
     }
 }

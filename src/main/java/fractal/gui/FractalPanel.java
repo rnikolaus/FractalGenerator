@@ -44,10 +44,7 @@ public class FractalPanel extends javax.swing.JPanel {
     Timer deferredTimer = new Timer(100, (ActionEvent e) -> {
         deferredAction();
     });
-    //Timer for repainting the panel to make the progress visible
-    Timer refreshTimer = new Timer(100, (ActionEvent e) -> {
-        repaint();
-    });
+    
 
     private void deferredAction() {
         createFract();
@@ -63,7 +60,7 @@ public class FractalPanel extends javax.swing.JPanel {
     public FractalPanel() {
         initComponents();
         deferredTimer.setRepeats(false);
-        refreshTimer.setRepeats(true);
+        
         resetOffset();
         fractalColorSet.addFractalColor(new FractalColor(10, 0, 0));
         fractalColorSet.addFractalColor(new FractalColor(0, 10, 0));
@@ -74,20 +71,12 @@ public class FractalPanel extends javax.swing.JPanel {
         pixelQueue = new PixelQueue(new PixelQueue.HandlePixelQueue() {
 
             @Override
-            public void run(LinkedBlockingQueue<FractalPixel> queue) {
+            public void run(PixelQueue queue) {
                 SwingUtilities.invokeLater(() -> { 
-                
-        
-                while (!queue.isEmpty()){
-                    try {
-                        FractalPixel fp =queue.poll(1, TimeUnit.SECONDS);
-                        img.getRaster().setPixel(fp.getX(), fp.getY(), fp.getCol());
-                    } catch (InterruptedException ex) {
-                        
+                    for (FractalPixel fp :queue.getPixels()){
+                        img.getRaster().setPixel(fp.getX(), fp.getY(), fp.getCol());   
                     }
-                }
-                
-        
+                    repaint();
         });
                 
             }
@@ -103,16 +92,7 @@ public class FractalPanel extends javax.swing.JPanel {
         SwingUtilities.invokeLater(() -> { 
         boolean old = this.running;
         this.running = running;
-        if (running) {
-            if (!refreshTimer.isRunning()) {
-                refreshTimer.start();
-            }
-        } else {
-            if (refreshTimer.isRunning()) {
-                refreshTimer.stop();
-            }
-            repaint();
-        }
+        
 
         firePropertyChange("running", old, running);
         });
