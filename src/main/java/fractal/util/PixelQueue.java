@@ -7,7 +7,8 @@ package fractal.util;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  *
@@ -19,30 +20,32 @@ public class PixelQueue {
 
         public abstract void run(PixelQueue queue);
     }
-    private final LinkedBlockingQueue<FractalPixel> queue = new LinkedBlockingQueue<>();
+    private final ConcurrentLinkedQueue<FractalPixel> queue = new ConcurrentLinkedQueue<>();
     private final RenderPixels renderPixels;
-    private boolean signal;
+    private final AtomicBoolean signal = new AtomicBoolean(false);
 
     public PixelQueue(RenderPixels renderPixels) {
         this.renderPixels = renderPixels;
+        
     }
 
     public void add(FractalPixel fp) {
         queue.add(fp);
-        synchronized (this) {
-            if (!queue.isEmpty() && !signal) {
-                signal = true;
-                renderPixels.run(this);
-            }
+        if (signal.compareAndSet(false, true)) {
+            renderPixels.run(this);
         }
+
     }
 
     public Collection<FractalPixel> getPixels() {
         Collection<FractalPixel> result = new ArrayList<>();
-        synchronized (this) {
-            this.queue.drainTo(result);
-            signal = false;
-        }
+            FractalPixel fp;
+            fp=queue.poll();
+            while(fp!=null){
+                result.add(fp);
+                fp = queue.poll();
+            }
+            signal.compareAndSet(true, false); 
         return result;
     }
 }
