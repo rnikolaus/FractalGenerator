@@ -7,6 +7,7 @@ package fractal.util;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -21,31 +22,52 @@ public class PixelQueue {
         public abstract void run(PixelQueue queue);
     }
     private final ConcurrentLinkedQueue<FractalPixel> queue = new ConcurrentLinkedQueue<>();
-    private final RenderPixels renderPixels;
-    private final AtomicBoolean signal = new AtomicBoolean(false);
+   
 
-    public PixelQueue(RenderPixels renderPixels) {
-        this.renderPixels = renderPixels;
-        
-    }
+    
 
     public void add(FractalPixel fp) {
         queue.add(fp);
-        if (signal.compareAndSet(false, true)) {
-            renderPixels.run(this);
-        }
+
 
     }
+    public synchronized void clear(){
+        queue.clear();
+    }
 
-    public Collection<FractalPixel> getPixels() {
-        Collection<FractalPixel> result = new ArrayList<>();
-            FractalPixel fp;
-            fp=queue.poll();
-            while(fp!=null){
-                result.add(fp);
-                fp = queue.poll();
+    public Iterable<FractalPixel> getPixels() {
+        Iterable<FractalPixel> i = new Iterable<FractalPixel>() {
+
+            @Override
+            public Iterator<FractalPixel> iterator() {
+                return new Iterator<FractalPixel>() {
+                    FractalPixel fp = queue.poll();
+                    
+
+                    @Override
+                    public boolean hasNext() {
+                        return fp!=null;
+                    }
+
+                    @Override
+                    public FractalPixel next() {
+                        FractalPixel result = fp;
+                        fp = queue.poll();
+                        return result;
+                    }
+                };
+                
             }
-            signal.compareAndSet(true, false); 
-        return result;
+        };
+        return i;
+//        Collection<FractalPixel> result = new ArrayList<>();
+//            FractalPixel fp;
+//            fp=queue.poll();
+//            while(fp!=null){
+//                result.add(fp);
+//                fp = queue.poll();
+//            }
+//            
+//        return result;
     }
 }

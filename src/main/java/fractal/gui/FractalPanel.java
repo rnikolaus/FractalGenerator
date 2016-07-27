@@ -42,6 +42,9 @@ public class FractalPanel extends javax.swing.JPanel {
     Timer deferredTimer = new Timer(100, (ActionEvent e) -> {
         deferredAction();
     });
+    Timer renderTimer = new Timer(50, (ActionEvent e) -> {
+        renderPixels();
+    });
     
 
     private void deferredAction() {
@@ -58,7 +61,7 @@ public class FractalPanel extends javax.swing.JPanel {
     public FractalPanel() {
         initComponents();
         deferredTimer.setRepeats(false);
-        
+        renderTimer.setRepeats(false);
         resetOffset();
         fractalColorSet.addFractalColor(new FractalColor(10, 0, 0));
         fractalColorSet.addFractalColor(new FractalColor(0, 10, 0));
@@ -66,30 +69,34 @@ public class FractalPanel extends javax.swing.JPanel {
         fractalColorSet.addFractalColor(new FractalColor(10, 10, 0));
         fractalColorSet.addFractalColor(new FractalColor(10, 0, 10));
         fractalColorSet.addFractalColor(new FractalColor(0, 10, 10));
-        pixelQueue = new PixelQueue(new PixelQueue.RenderPixels() {
-
-            @Override
-            public void run(PixelQueue queue) {
-                SwingUtilities.invokeLater(() -> { 
-                    for (FractalPixel fp :queue.getPixels()){
-                        img.getRaster().setPixel(fp.getX(), fp.getY(), fp.getCol());   
-                    }
-                    repaint();
-        });
-                
-            }
-        });
+        pixelQueue = new PixelQueue();
+         
 
     }
 
     public boolean isRunning() {
         return running;
     }
+    private void renderPixels() {
+        for (FractalPixel fp : pixelQueue.getPixels()) {
+            img.getRaster().setPixel(fp.getX(), fp.getY(), fp.getCol());
+        }
+        repaint();
+    }
 
     private void setRunning(boolean running) {
-        SwingUtilities.invokeLater(() -> { 
-        boolean old = this.running;
-        this.running = running;
+        SwingUtilities.invokeLater(() -> {
+            boolean old = this.running;
+            this.running = running;
+            if (running) {
+                renderTimer.setRepeats(true);
+                renderTimer.restart();
+            } else {
+                renderTimer.setRepeats(false);
+                renderTimer.stop();
+                renderPixels();
+
+            }
         
 
         firePropertyChange("running", old, running);
@@ -152,6 +159,7 @@ public class FractalPanel extends javax.swing.JPanel {
         stopCalculation();
         img.setData(blank);
         setRunning(true);
+        
 
         FractalConfigBean frb = new FractalConfigBean(fact, offsetX, offsetY ,fractalColorSet, abstractFractal, img.getRaster().getWidth(),img.getRaster().getHeight(),pixelQueue);
 
@@ -230,8 +238,10 @@ public class FractalPanel extends javax.swing.JPanel {
     private void formComponentResized(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentResized
         int sizeX = getWidth();
         int sizeY = getHeight();
+        pixelQueue.clear();
         img = new BufferedImage(sizeX, sizeY, BufferedImage.TYPE_INT_RGB);
         blank = img.getData();
+       
         calculateFractalDeferred();
     }//GEN-LAST:event_formComponentResized
 
