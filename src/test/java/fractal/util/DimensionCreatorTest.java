@@ -23,9 +23,9 @@ public class DimensionCreatorTest extends TestCase {
     }
     public void testProducer(){
         ArrayList<DimXY> result = new ArrayList<>();
-        Iterator<DimXY> it = DimensionCreator.getDimensionProducer(5, 5);
-        while (it.hasNext()){
-            result.add(it.next());
+        Iterable<DimXY> it = DimensionCreator.getDimensionProducer(5, 5);
+        for (DimXY res :it){
+            result.add(res);
         }
         try5x5dimensions(result);
     }

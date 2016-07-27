@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -26,12 +27,12 @@ public class DimensionCreator {
         return createDimensions(fractalDimensionsBean.getSizeX(), fractalDimensionsBean.getSizeY(),new ArrayList<>());
     }
 
-    public static Iterator<DimXY> getDimensionProducer(FractalConfigBean fractalDimensionsBean) {
+    public static Iterable<DimXY> getDimensionProducer(FractalConfigBean fractalDimensionsBean) {
         return DimensionCreator.getDimensionProducer(fractalDimensionsBean.getSizeX(), fractalDimensionsBean.getSizeY());
     }
 
     
-    public static Iterator<DimXY> getDimensionProducer(int x, int y) {
+    public static Iterable<DimXY> getDimensionProducer(int x, int y) {
         LinkedBlockingQueue<DimXY> dimensionQueue = getProducerQueue(x, y);
         Thread dimensionCreationThread = new Thread(new Runnable() {
 
@@ -43,7 +44,35 @@ public class DimensionCreator {
         dimensionCreationThread.setPriority(Thread.MAX_PRIORITY);
         dimensionCreationThread.start();
 
-        return dimensionQueue.iterator();
+        return new Iterable<DimXY>() {
+
+            @Override
+            public Iterator<DimXY> iterator() {
+                return new Iterator<DimXY>() {
+                    DimXY current = poll();
+                    private DimXY poll(){
+                        try {
+                            return dimensionQueue.poll(1, TimeUnit.SECONDS);
+                        } catch (InterruptedException ex) {
+                            return null;
+                        }
+                    }
+
+                    @Override
+                    public boolean hasNext() {
+                        return current!=null;
+                    }
+
+                    @Override
+                    public DimXY next() {
+                        DimXY result = current;
+                        current = poll();
+                        return result;
+                        
+                    }
+                };
+            }
+        };
     }
 
     private static LinkedBlockingQueue<DimXY> getProducerQueue(int x, int y) {

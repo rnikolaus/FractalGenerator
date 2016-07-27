@@ -40,8 +40,8 @@ public class ThreadPoolFractalCalculator extends AbstractFractalCalculator {
     @Override
     public void run() {
         try {
-            for (Iterator<DimXY> producer = getDimensionProducer(); producer.hasNext();) {
-                DimXY dim = producer.next();
+            for (DimXY dim :getDimensionProducer()) {
+                
                 exs.submit(new CalculationRunnable(dim));
             }
             exs.shutdown();
