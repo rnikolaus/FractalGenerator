@@ -170,6 +170,7 @@ public class FractalPanel extends javax.swing.JPanel {
         } else {
             fractalCalculator=new ThreadPoolFractalCalculator(frb,  ()  -> {
             setRunning(false);}, getThreadPoolSize());
+            fractalCalculator.setPriority(Thread.MAX_PRIORITY);
         }
         fractalCalculator.start();
     }

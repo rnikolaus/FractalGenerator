@@ -13,6 +13,46 @@ import java.util.logging.Logger;
  * @author rapnik
  */
 public class ThreadPoolFractalCalculator extends AbstractFractalCalculator {
+    private class DimensionIterator implements Iterable<DimXY>{
+
+        final private int x;
+        final private int y;
+        public DimensionIterator(int x, int y) {
+            this.x = x;
+            this.y = y;
+        }
+        
+        @Override
+            public Iterator<DimXY> iterator() {
+                return new Iterator<DimXY>() {
+                    int xlocal = 0;
+                    int ylocal = 0;
+                    DimXY nextVal = new DimXY(xlocal, ylocal);
+
+                    @Override
+                    public boolean hasNext() {
+                        return nextVal!=null;
+                    }
+
+                    @Override
+                    public DimXY next() {
+                        DimXY result = nextVal;
+                        ylocal++;
+                        if (!(ylocal<y)){
+                            ylocal=0;
+                            xlocal++;
+                            if (!(xlocal<x)){
+                                nextVal = null;
+                                return result;
+                            }
+                        }
+                        nextVal=new DimXY(xlocal, ylocal);
+                        return result;
+                        
+                    }
+                };
+            }
+    }
 
     private class CalculationRunnable implements Runnable {
 
@@ -40,7 +80,9 @@ public class ThreadPoolFractalCalculator extends AbstractFractalCalculator {
     @Override
     public void run() {
         try {
-            for (DimXY dim :getDimensionProducer()) {
+            for (DimXY dim :new DimensionIterator(
+                    fractalDimensionsBean.getSizeX(), 
+                    fractalDimensionsBean.getSizeY())) {
                 
                 exs.submit(new CalculationRunnable(dim));
             }

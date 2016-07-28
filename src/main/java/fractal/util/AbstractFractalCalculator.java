@@ -20,7 +20,7 @@ public abstract class AbstractFractalCalculator extends Thread {
         this.fractalDimensionsBean = fractalDimensionsBean;
         
         this.finishCallback = finishCallback;
-        this.setPriority(MIN_PRIORITY);
+        //this.setPriority(MIN_PRIORITY);
         
     }
     public PixelQueue getPixelQueue(){
@@ -53,13 +53,7 @@ public abstract class AbstractFractalCalculator extends Thread {
         return new Complex(real, imaginary);
     }
 
-    protected Collection<DimXY> getDimensions() {
-        return DimensionCreator.getDimensions(fractalDimensionsBean);
-    }
-
-    protected Iterable<DimXY> getDimensionProducer() {
-        return DimensionCreator.getDimensionProducer(fractalDimensionsBean);
-    }
+   
 
     protected void runCallback() {
         finishCallback.run();
