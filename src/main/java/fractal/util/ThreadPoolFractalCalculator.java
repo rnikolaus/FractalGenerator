@@ -16,15 +16,20 @@ public class ThreadPoolFractalCalculator extends AbstractFractalCalculator {
 
     private class CalculationRunnable implements Runnable {
 
-        private final DimXY dim;
+       
+        private final int x;
+        private final int y;
+        
 
-        public CalculationRunnable(DimXY dim) {
-            this.dim = dim;
+       
+        public CalculationRunnable(int x, int y){
+            this.x = x;
+            this.y = y;
         }
 
         @Override
         public void run() {
-            getPixelQueue().add(runFunction(dim));
+            getPixelQueue().add(runFunction(x,y));
         }
 
     }
@@ -42,7 +47,7 @@ public class ThreadPoolFractalCalculator extends AbstractFractalCalculator {
         try {
             for (int localx =0;localx<fractalDimensionsBean.getSizeX();localx++){
                 for (int localy =0;localy<fractalDimensionsBean.getSizeY();localy++){
-                    exs.submit(new CalculationRunnable(new DimXY(localx, localy)));
+                    exs.submit(new CalculationRunnable(localx, localy));
                 }
                 
             }
